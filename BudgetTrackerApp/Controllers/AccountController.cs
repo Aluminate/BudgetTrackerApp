@@ -151,7 +151,15 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username };
+                var user = new ApplicationUser {
+                    UserName = model.Username,
+                    FirstName = model.FirstName,
+                    MiddleName = model.MiddleName,
+                    LastName = model.LastName,
+                    SecurityQuestion = model.SecurityQuestion,
+                    SecurityQuestionAnswer = model.SecurityQuestionAnswer,
+                    Gender = model.Gender
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
