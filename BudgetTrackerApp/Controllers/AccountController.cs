@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BudgetTrackerApp.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace BudgetTrackerApp.Controllers
 {
@@ -151,18 +152,39 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                string hashedSecurityPassword = UserManager.PasswordHasher.HashPassword(model.SecurityQuestionAnswer);
                 var user = new ApplicationUser {
                     UserName = model.Username,
                     FirstName = model.FirstName,
                     MiddleName = model.MiddleName,
                     LastName = model.LastName,
                     SecurityQuestion = model.SecurityQuestion,
-                    SecurityQuestionAnswer = model.SecurityQuestionAnswer,
+                    SecurityQuestionAnswer = hashedSecurityPassword,
                     Gender = model.Gender
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var roleManager = new RoleManager<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
+                   
+                    if (!roleManager.RoleExists("User"))
+                    {
+                        var role = new IdentityRole();
+                        role.Name = "User";
+                        roleManager.Create(role);
+
+                    }
+                    if (!roleManager.RoleExists("Admin"))
+                    {
+                        var role = new IdentityRole();
+                        role.Name = "Admin";
+                        roleManager.Create(role);
+
+                    }
+                    if (user.UserName.Equals("Admin"))
+                        await UserManager.AddToRoleAsync(user.Id, "Admin");
+                    else
+                        await UserManager.AddToRoleAsync(user.Id, "User");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
