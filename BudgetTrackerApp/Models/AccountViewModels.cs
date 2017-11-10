@@ -105,9 +105,8 @@ namespace BudgetTrackerApp.Models
     public class ResetPasswordViewModel
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
@@ -125,9 +124,14 @@ namespace BudgetTrackerApp.Models
 
     public class ForgotPasswordViewModel
     {
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [Display(Name = "SecurityQuestion")]
+        public string SecurityQuestion { get; set; }
+
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "SecurityAnswer")]
+        public string SecurityAnswer { get; set; }
     }
 }

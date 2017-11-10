@@ -183,9 +183,21 @@ namespace BudgetTrackerApp.Controllers
         //
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
-        public ActionResult ForgotPassword()
+        public ActionResult ForgotPassword(ForgotPasswordViewModel model, string Username)
         {
-            return View();
+            if (String.IsNullOrEmpty(Username))
+                return RedirectToAction("Login", "Account");
+            var user = UserManager.FindByNameAsync(Username);
+            if (user.Result != null)
+            {
+                model.Username = Username;
+                model.SecurityQuestion = user.Result.SecurityQuestion;
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View(model);
         }
 
         //
@@ -197,19 +209,18 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                var user = await UserManager.FindByNameAsync(model.Username);
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                else if (user.SecurityQuestionAnswer.Equals(model.SecurityAnswer))
+                {
+                    var generatedToken = UserManager.GeneratePasswordResetToken(user.Id);
+                    return RedirectToAction("ResetPassword", "Account", new { username = model.Username, token = generatedToken });
+                }
+               return RedirectToAction("Login", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -227,9 +238,11 @@ namespace BudgetTrackerApp.Controllers
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
-        public ActionResult ResetPassword(string code)
+        public ActionResult ResetPassword(ResetPasswordViewModel model, string username, string token)
         {
-            return code == null ? View("Error") : View();
+            model.Username = username;
+            model.Code = token;
+            return View(model);
         }
 
         //
@@ -243,7 +256,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            var user = await UserManager.FindByNameAsync(model.Username);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
