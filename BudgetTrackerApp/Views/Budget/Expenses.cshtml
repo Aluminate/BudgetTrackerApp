@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Expenses";
+    var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#incomeTable').DataTable();
+    });
+</script>
+<div class="jumbotron">
+    <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Expenses</h1>
+</div>
+
+<div class="row">
+    <div id="incomeTable" class="col-lg-8"></div>
+    <div class="col-lg-4">
+        <div id="buttons">
+            <button type="button" class="btn btn-default">Add Expense</button>
+            <button type="button" class="btn btn-default">Categories</button>
+            <button type="button" class="btn btn-default">Export to Excel</button>
+        </div>
+        <div id="filter">
+        </div>
+    </div>
+</div>

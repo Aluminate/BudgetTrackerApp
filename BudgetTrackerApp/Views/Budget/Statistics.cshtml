@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Statistics";
+    var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+<div class="jumbotron">
+    <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Statistics</h1>
+</div>
+
+<div class="row">
+
+</div>
+
+<div class="row">
+
+</div>
