@@ -10,6 +10,7 @@
     $(document).ready(function () {
         $('#incomeTable').DataTable();
     });
+
 </script>
 <div class="jumbotron">
     <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Expenses</h1>
@@ -19,11 +20,95 @@
     <div id="incomeTable" class="col-lg-8"></div>
     <div class="col-lg-4">
         <div id="buttons">
-            <button type="button" class="btn btn-default">Add Expense</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addExpenseModal">Add Expense</button>
             <button type="button" class="btn btn-default">Categories</button>
             <button type="button" class="btn btn-default">Export to Excel</button>
         </div>
         <div id="filter">
+        </div>
+    </div>
+</div>
+
+<!-- Add Expense Modal -->
+<div id="addExpenseModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Expense</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+                <form method="post">
+                    <fieldset>
+                        <legend>Expense Information</legend>
+                        <p>
+                            <label for="category">Category:</label>
+                            <input type="text" name="category" value="@Request.Form["category"]" />
+                        </p>
+
+                        <p>
+                            <label for="description">Description:</label>
+                            <input type="text" name="description" value="@Request.Form["description"]" />
+                        </p>
+
+                        <p>
+                            <label for="amount">Amount:</label>
+                            <span class="input-group-addon">$</span>
+                            <input type="text" name="amount" value="@Request.Form["amount"]" />
+                        </p>
+
+                        <p><input type="submit" name="buttonSubmit" value="Add Expense" /></p>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Modal -->
+<div id="CategoriesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Categories</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+                <form method="post">
+                    <fieldset>
+                        <legend>Expense Information</legend>
+                        <p>
+                            <label for="category">Category:</label>
+                            <input type="text" name="category" value="@Request.Form["category"]" />
+                        </p>
+
+                        <p>
+                            <label for="description">Description:</label>
+                            <input type="text" name="description" value="@Request.Form["description"]" />
+                        </p>
+
+                        <p>
+                            <label for="amount">Amount:</label>
+                            <span class="input-group-addon">$</span>
+                            <input type="text" name="amount" value="@Request.Form["amount"]" />
+                        </p>
+
+                        <p><input type="submit" name="buttonSubmit" value="Add Expense" /></p>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>

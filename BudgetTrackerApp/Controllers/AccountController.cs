@@ -435,7 +435,6 @@ namespace BudgetTrackerApp.Controllers
 
         //
         // GET: /Account/Settings
-        [AllowAnonymous]
         public ActionResult Settings()
         {
             return View();

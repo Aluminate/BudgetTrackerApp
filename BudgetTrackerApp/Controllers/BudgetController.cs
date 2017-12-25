@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BudgetTrackerApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,12 +7,15 @@ using System.Web.Mvc;
 
 namespace BudgetTrackerApp.Controllers
 {
+    [Authorize]
     public class BudgetController : Controller
     {
+        private DBEntities db = new DBEntities("database");
+
         // GET: Expenses
         public ActionResult Expenses()
         {
-            return View();
+            return View(db.Expenses.ToList());
         }
 
         // GET: Income
