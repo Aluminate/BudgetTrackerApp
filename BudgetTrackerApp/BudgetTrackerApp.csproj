@@ -81,6 +81,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -191,17 +193,56 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountBudget.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Budget.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BudgetEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BudgetEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BudgetEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BudgetEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BudgetEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="BudgetGoal.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Category.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CategoryGoal.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BudgetController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Expense.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Feedback.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Income.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Migrations\201709230104183_InitialCreate.cs" />
     <Compile Include="Migrations\201709230104183_InitialCreate.Designer.cs">
@@ -215,10 +256,23 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="PeriodicIncome.cs">
+      <DependentUpon>BudgetEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BudgetEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BudgetEntities.edmx</DependentUpon>
+      <LastGenOutput>BudgetEntities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BudgetEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BudgetEntities.edmx</DependentUpon>
+      <LastGenOutput>BudgetEntities.cs</LastGenOutput>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -229,6 +283,13 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EntityDeploy Include="BudgetEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BudgetEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="BudgetEntities.edmx.diagram">
+      <DependentUpon>BudgetEntities.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\BudgetTrackerApp - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -306,6 +367,9 @@
     <EmbeddedResource Include="Migrations\201710052217072_FirstName.resx">
       <DependentUpon>201710052217072_FirstName.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

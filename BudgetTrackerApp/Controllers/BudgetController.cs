@@ -10,12 +10,11 @@ namespace BudgetTrackerApp.Controllers
     [Authorize]
     public class BudgetController : Controller
     {
-        private DBEntities db = new DBEntities("database");
 
         // GET: Expenses
         public ActionResult Expenses()
         {
-            return View(db.Expenses.ToList());
+            return View();
         }
 
         // GET: Income

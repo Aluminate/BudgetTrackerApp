@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="21c83b01413b407795ca159ac3237a35" Name="Diagram1">
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.BudgetGoal" Width="1.5" PointX="3" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.Budget" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.Category" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.Expense" Width="1.5" PointX="5.25" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.Feedback" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.Income" Width="1.5" PointX="3" PointY="8.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.PeriodicIncome" Width="1.5" PointX="3" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.AccountBudget" Width="1.5" PointX="3" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MyBudgetTrackerAppModel.CategoryGoal" Width="1.5" PointX="5.25" PointY="3.625" IsExpanded="true" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_BudgetGoals_Budgets" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_CategoryGoals_BudgetGoals" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_AccountBudgets_Budgets" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_Budgets_BudgetId" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_Expenses_Budgets" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_Income_Budgets" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_PeriodicIncome_Budgets" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_CategoryGoals_Categories" ManuallyRouted="false" />
+        <AssociationConnector Association="MyBudgetTrackerAppModel.FK_Expenses_Categories" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

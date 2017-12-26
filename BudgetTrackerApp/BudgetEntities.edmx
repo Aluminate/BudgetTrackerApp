@@ -1,0 +1,667 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="MyBudgetTrackerAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MyBudgetTrackerApp.dbo.AccountBudgets' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AccountBudgets">
+          <Key>
+            <PropertyRef Name="BudgetId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="IsAccepted" />
+            <PropertyRef Name="CreatedDate" />
+          </Key>
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="IsAccepted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="BudgetGoals">
+          <Key>
+            <PropertyRef Name="BudgetGoalId" />
+          </Key>
+          <Property Name="BudgetGoalId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="TimePeriod" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="BudgetAmount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="IsProgressBarEnabled" Type="bit" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Budgets">
+          <Key>
+            <PropertyRef Name="BudgetId" />
+          </Key>
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Categories">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CategoryGoals">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+            <PropertyRef Name="BudgetGoalId" />
+            <PropertyRef Name="BudgetAmount" />
+          </Key>
+          <Property Name="CategoryId" Type="int" Nullable="false" />
+          <Property Name="BudgetGoalId" Type="int" Nullable="false" />
+          <Property Name="BudgetAmount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Expenses">
+          <Key>
+            <PropertyRef Name="ExpenseId" />
+          </Key>
+          <Property Name="ExpenseId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="CategoryId" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="PictureUrl" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="FeedbackId" />
+          </Key>
+          <Property Name="FeedbackId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="IsTestimonial" Type="bit" Nullable="false" />
+          <Property Name="IsHidden" Type="bit" Nullable="false" />
+          <Property Name="Message" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Income">
+          <Key>
+            <PropertyRef Name="IncomeId" />
+          </Key>
+          <Property Name="IncomeId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PeriodicIncome">
+          <Key>
+            <PropertyRef Name="PeriodicIncomeId" />
+          </Key>
+          <Property Name="PeriodicIncomeId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="IntervalDays" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_AccountBudgets_Budgets">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="AccountBudgets" Type="Self.AccountBudgets" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="AccountBudgets">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BudgetGoals_Budgets">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="BudgetGoals" Type="Self.BudgetGoals" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="BudgetGoals">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Budgets_BudgetId">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="Categories" Type="Self.Categories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Categories">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CategoryGoals_BudgetGoals">
+          <End Role="BudgetGoals" Type="Self.BudgetGoals" Multiplicity="1" />
+          <End Role="CategoryGoals" Type="Self.CategoryGoals" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BudgetGoals">
+              <PropertyRef Name="BudgetGoalId" />
+            </Principal>
+            <Dependent Role="CategoryGoals">
+              <PropertyRef Name="BudgetGoalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CategoryGoals_Categories">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
+          <End Role="CategoryGoals" Type="Self.CategoryGoals" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="CategoryGoals">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expenses_Budgets">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="Expenses" Type="Self.Expenses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Expenses">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expenses_Categories">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
+          <End Role="Expenses" Type="Self.Expenses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Expenses">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Income_Budgets">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="Income" Type="Self.Income" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Income">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PeriodicIncome_Budgets">
+          <End Role="Budgets" Type="Self.Budgets" Multiplicity="1" />
+          <End Role="PeriodicIncome" Type="Self.PeriodicIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="PeriodicIncome">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MyBudgetTrackerAppModelStoreContainer">
+          <EntitySet Name="BudgetGoals" EntityType="Self.BudgetGoals" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Budgets" EntityType="Self.Budgets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Expenses" EntityType="Self.Expenses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Income" EntityType="Self.Income" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PeriodicIncome" EntityType="Self.PeriodicIncome" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountBudgets" EntityType="Self.AccountBudgets" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AccountBudgets].[BudgetId] AS [BudgetId], 
+    [AccountBudgets].[UserId] AS [UserId], 
+    [AccountBudgets].[IsAccepted] AS [IsAccepted], 
+    [AccountBudgets].[CreatedDate] AS [CreatedDate]
+    FROM [dbo].[AccountBudgets] AS [AccountBudgets]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="CategoryGoals" EntityType="Self.CategoryGoals" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CategoryGoals].[CategoryId] AS [CategoryId], 
+    [CategoryGoals].[BudgetGoalId] AS [BudgetGoalId], 
+    [CategoryGoals].[BudgetAmount] AS [BudgetAmount]
+    FROM [dbo].[CategoryGoals] AS [CategoryGoals]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_AccountBudgets_Budgets" Association="Self.FK_AccountBudgets_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="AccountBudgets" EntitySet="AccountBudgets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BudgetGoals_Budgets" Association="Self.FK_BudgetGoals_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="BudgetGoals" EntitySet="BudgetGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Budgets_BudgetId" Association="Self.FK_Budgets_BudgetId">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Categories" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CategoryGoals_BudgetGoals" Association="Self.FK_CategoryGoals_BudgetGoals">
+            <End Role="BudgetGoals" EntitySet="BudgetGoals" />
+            <End Role="CategoryGoals" EntitySet="CategoryGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CategoryGoals_Categories" Association="Self.FK_CategoryGoals_Categories">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="CategoryGoals" EntitySet="CategoryGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expenses_Budgets" Association="Self.FK_Expenses_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Expenses" EntitySet="Expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expenses_Categories" Association="Self.FK_Expenses_Categories">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Expenses" EntitySet="Expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Income_Budgets" Association="Self.FK_Income_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Income" EntitySet="Income" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PeriodicIncome_Budgets" Association="Self.FK_PeriodicIncome_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="PeriodicIncome" EntitySet="PeriodicIncome" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MyBudgetTrackerAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BudgetGoal">
+          <Key>
+            <PropertyRef Name="BudgetGoalId" />
+          </Key>
+          <Property Name="BudgetGoalId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="TimePeriod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BudgetAmount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="IsProgressBarEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_BudgetGoals_Budgets" FromRole="BudgetGoals" ToRole="Budgets" />
+          <NavigationProperty Name="CategoryGoals" Relationship="Self.FK_CategoryGoals_BudgetGoals" FromRole="BudgetGoals" ToRole="CategoryGoals" />
+        </EntityType>
+        <EntityType Name="Budget">
+          <Key>
+            <PropertyRef Name="BudgetId" />
+          </Key>
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="BudgetGoals" Relationship="Self.FK_BudgetGoals_Budgets" FromRole="Budgets" ToRole="BudgetGoals" />
+          <NavigationProperty Name="AccountBudgets" Relationship="Self.FK_AccountBudgets_Budgets" FromRole="Budgets" ToRole="AccountBudgets" />
+          <NavigationProperty Name="Categories" Relationship="Self.FK_Budgets_BudgetId" FromRole="Budgets" ToRole="Categories" />
+          <NavigationProperty Name="Expenses" Relationship="Self.FK_Expenses_Budgets" FromRole="Budgets" ToRole="Expenses" />
+          <NavigationProperty Name="Incomes" Relationship="Self.FK_Income_Budgets" FromRole="Budgets" ToRole="Income" />
+          <NavigationProperty Name="PeriodicIncomes" Relationship="Self.FK_PeriodicIncome_Budgets" FromRole="Budgets" ToRole="PeriodicIncome" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="CategoryId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_Budgets_BudgetId" FromRole="Categories" ToRole="Budgets" />
+          <NavigationProperty Name="CategoryGoals" Relationship="Self.FK_CategoryGoals_Categories" FromRole="Categories" ToRole="CategoryGoals" />
+          <NavigationProperty Name="Expenses" Relationship="Self.FK_Expenses_Categories" FromRole="Categories" ToRole="Expenses" />
+        </EntityType>
+        <EntityType Name="Expense">
+          <Key>
+            <PropertyRef Name="ExpenseId" />
+          </Key>
+          <Property Name="ExpenseId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="CategoryId" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="PictureUrl" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_Expenses_Budgets" FromRole="Expenses" ToRole="Budgets" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_Expenses_Categories" FromRole="Expenses" ToRole="Categories" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="FeedbackId" />
+          </Key>
+          <Property Name="FeedbackId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsTestimonial" Type="Boolean" Nullable="false" />
+          <Property Name="IsHidden" Type="Boolean" Nullable="false" />
+          <Property Name="Message" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Income">
+          <Key>
+            <PropertyRef Name="IncomeId" />
+          </Key>
+          <Property Name="IncomeId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_Income_Budgets" FromRole="Income" ToRole="Budgets" />
+        </EntityType>
+        <EntityType Name="PeriodicIncome">
+          <Key>
+            <PropertyRef Name="PeriodicIncomeId" />
+          </Key>
+          <Property Name="PeriodicIncomeId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="IntervalDays" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_PeriodicIncome_Budgets" FromRole="PeriodicIncome" ToRole="Budgets" />
+        </EntityType>
+        <EntityType Name="AccountBudget">
+          <Key>
+            <PropertyRef Name="BudgetId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="IsAccepted" />
+            <PropertyRef Name="CreatedDate" />
+          </Key>
+          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsAccepted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Budget" Relationship="Self.FK_AccountBudgets_Budgets" FromRole="AccountBudgets" ToRole="Budgets" />
+        </EntityType>
+        <EntityType Name="CategoryGoal">
+          <Key>
+            <PropertyRef Name="CategoryId" />
+            <PropertyRef Name="BudgetGoalId" />
+            <PropertyRef Name="BudgetAmount" />
+          </Key>
+          <Property Name="CategoryId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetGoalId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetAmount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
+          <NavigationProperty Name="BudgetGoal" Relationship="Self.FK_CategoryGoals_BudgetGoals" FromRole="CategoryGoals" ToRole="BudgetGoals" />
+          <NavigationProperty Name="Category" Relationship="Self.FK_CategoryGoals_Categories" FromRole="CategoryGoals" ToRole="Categories" />
+        </EntityType>
+        <Association Name="FK_BudgetGoals_Budgets">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="BudgetGoals" Type="Self.BudgetGoal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="BudgetGoals">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CategoryGoals_BudgetGoals">
+          <End Role="BudgetGoals" Type="Self.BudgetGoal" Multiplicity="1" />
+          <End Role="CategoryGoals" Type="Self.CategoryGoal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BudgetGoals">
+              <PropertyRef Name="BudgetGoalId" />
+            </Principal>
+            <Dependent Role="CategoryGoals">
+              <PropertyRef Name="BudgetGoalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccountBudgets_Budgets">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="AccountBudgets" Type="Self.AccountBudget" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="AccountBudgets">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Budgets_BudgetId">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="Categories" Type="Self.Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Categories">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expenses_Budgets">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="Expenses" Type="MyBudgetTrackerAppModel.Expense" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Expenses">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Income_Budgets">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="Income" Type="Self.Income" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="Income">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PeriodicIncome_Budgets">
+          <End Role="Budgets" Type="Self.Budget" Multiplicity="1" />
+          <End Role="PeriodicIncome" Type="Self.PeriodicIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Budgets">
+              <PropertyRef Name="BudgetId" />
+            </Principal>
+            <Dependent Role="PeriodicIncome">
+              <PropertyRef Name="BudgetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CategoryGoals_Categories">
+          <End Role="Categories" Type="Self.Category" Multiplicity="1" />
+          <End Role="CategoryGoals" Type="Self.CategoryGoal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="CategoryGoals">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expenses_Categories">
+          <End Role="Categories" Type="Self.Category" Multiplicity="1" />
+          <End Role="Expenses" Type="MyBudgetTrackerAppModel.Expense" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryId" />
+            </Principal>
+            <Dependent Role="Expenses">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MyBudgetTrackerAppEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BudgetGoals" EntityType="Self.BudgetGoal" />
+          <EntitySet Name="Budgets" EntityType="Self.Budget" />
+          <EntitySet Name="Categories" EntityType="Self.Category" />
+          <EntitySet Name="Expenses" EntityType="MyBudgetTrackerAppModel.Expense" />
+          <EntitySet Name="Feedbacks" EntityType="Self.Feedback" />
+          <EntitySet Name="Incomes" EntityType="Self.Income" />
+          <EntitySet Name="PeriodicIncomes" EntityType="Self.PeriodicIncome" />
+          <EntitySet Name="AccountBudgets" EntityType="Self.AccountBudget" />
+          <EntitySet Name="CategoryGoals" EntityType="Self.CategoryGoal" />
+          <AssociationSet Name="FK_BudgetGoals_Budgets" Association="Self.FK_BudgetGoals_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="BudgetGoals" EntitySet="BudgetGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CategoryGoals_BudgetGoals" Association="Self.FK_CategoryGoals_BudgetGoals">
+            <End Role="BudgetGoals" EntitySet="BudgetGoals" />
+            <End Role="CategoryGoals" EntitySet="CategoryGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccountBudgets_Budgets" Association="Self.FK_AccountBudgets_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="AccountBudgets" EntitySet="AccountBudgets" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Budgets_BudgetId" Association="Self.FK_Budgets_BudgetId">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Categories" EntitySet="Categories" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expenses_Budgets" Association="Self.FK_Expenses_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Expenses" EntitySet="Expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Income_Budgets" Association="Self.FK_Income_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="Income" EntitySet="Incomes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PeriodicIncome_Budgets" Association="Self.FK_PeriodicIncome_Budgets">
+            <End Role="Budgets" EntitySet="Budgets" />
+            <End Role="PeriodicIncome" EntitySet="PeriodicIncomes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CategoryGoals_Categories" Association="Self.FK_CategoryGoals_Categories">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="CategoryGoals" EntitySet="CategoryGoals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expenses_Categories" Association="Self.FK_Expenses_Categories">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Expenses" EntitySet="Expenses" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MyBudgetTrackerAppModelStoreContainer" CdmEntityContainer="MyBudgetTrackerAppEntities">
+          <EntitySetMapping Name="BudgetGoals">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.BudgetGoal">
+              <MappingFragment StoreEntitySet="BudgetGoals">
+                <ScalarProperty Name="BudgetGoalId" ColumnName="BudgetGoalId" />
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="TimePeriod" ColumnName="TimePeriod" />
+                <ScalarProperty Name="BudgetAmount" ColumnName="BudgetAmount" />
+                <ScalarProperty Name="IsProgressBarEnabled" ColumnName="IsProgressBarEnabled" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Budgets">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.Budget">
+              <MappingFragment StoreEntitySet="Budgets">
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.Category">
+              <MappingFragment StoreEntitySet="Categories">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Expenses">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.Expense">
+              <MappingFragment StoreEntitySet="Expenses">
+                <ScalarProperty Name="ExpenseId" ColumnName="ExpenseId" />
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PictureUrl" ColumnName="PictureUrl" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Feedbacks">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.Feedback">
+              <MappingFragment StoreEntitySet="Feedback">
+                <ScalarProperty Name="FeedbackId" ColumnName="FeedbackId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsTestimonial" ColumnName="IsTestimonial" />
+                <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Incomes">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.Income">
+              <MappingFragment StoreEntitySet="Income">
+                <ScalarProperty Name="IncomeId" ColumnName="IncomeId" />
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PeriodicIncomes">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.PeriodicIncome">
+              <MappingFragment StoreEntitySet="PeriodicIncome">
+                <ScalarProperty Name="PeriodicIncomeId" ColumnName="PeriodicIncomeId" />
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="IntervalDays" ColumnName="IntervalDays" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountBudgets">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.AccountBudget">
+              <MappingFragment StoreEntitySet="AccountBudgets">
+                <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsAccepted" ColumnName="IsAccepted" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CategoryGoals">
+            <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.CategoryGoal">
+              <MappingFragment StoreEntitySet="CategoryGoals">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="BudgetGoalId" ColumnName="BudgetGoalId" />
+                <ScalarProperty Name="BudgetAmount" ColumnName="BudgetAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
