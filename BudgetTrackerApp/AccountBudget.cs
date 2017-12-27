@@ -18,6 +18,7 @@ namespace BudgetTrackerApp
         public string UserId { get; set; }
         public bool IsAccepted { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public bool IsOwner { get; set; }
     
         public virtual Budget Budget { get; set; }
     }

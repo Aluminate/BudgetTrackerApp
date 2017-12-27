@@ -10,10 +10,12 @@ namespace BudgetTrackerApp.Controllers
     [Authorize]
     public class BudgetController : Controller
     {
+        private MyBudgetTrackerAppEntities db = new MyBudgetTrackerAppEntities();
 
         // GET: Expenses
         public ActionResult Expenses()
         {
+            
             return View();
         }
 
@@ -33,6 +35,15 @@ namespace BudgetTrackerApp.Controllers
         public ActionResult Calculator()
         {
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

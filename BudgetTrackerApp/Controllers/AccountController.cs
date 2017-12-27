@@ -18,6 +18,7 @@ namespace BudgetTrackerApp.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private MyBudgetTrackerAppEntities db = new MyBudgetTrackerAppEntities();
 
         public AccountController()
         {
@@ -184,7 +185,36 @@ namespace BudgetTrackerApp.Controllers
                     if (user.UserName.Equals("Admin"))
                         await UserManager.AddToRoleAsync(user.Id, "Admin");
                     else
+                    {
                         await UserManager.AddToRoleAsync(user.Id, "User");
+                        // Add entries into database for new user
+                        Budget newBudget = new Budget();
+                        newBudget.CreatedDate = DateTime.Now;
+                        db.Budgets.Add(newBudget);
+                        db.SaveChanges();
+                        AccountBudget newAccountBudget = new AccountBudget();
+                        newAccountBudget.BudgetId = newBudget.BudgetId;
+                        newAccountBudget.IsOwner = true;
+                        newAccountBudget.UserId = user.Id;
+                        db.AccountBudgets.Add(newAccountBudget);
+                        Category newCategory = new Category();
+                        newCategory.BudgetId = newBudget.BudgetId;
+                        newCategory.Name = "Food and Groceries";
+                        db.Categories.Add(newCategory);
+                        Category newCategory2 = new Category();
+                        newCategory2.BudgetId = newBudget.BudgetId;
+                        newCategory2.Name = "Entertainment";
+                        db.Categories.Add(newCategory2);
+                        Category newCategory3 = new Category();
+                        newCategory3.BudgetId = newBudget.BudgetId;
+                        newCategory3.Name = "Utilities";
+                        db.Categories.Add(newCategory3);
+                        Category newCategory4 = new Category();
+                        newCategory4.BudgetId = newBudget.BudgetId;
+                        newCategory4.Name = "Personal Care";
+                        db.Categories.Add(newCategory4);
+                        db.SaveChanges();
+                    }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -455,6 +485,7 @@ namespace BudgetTrackerApp.Controllers
                     _signInManager.Dispose();
                     _signInManager = null;
                 }
+                db.Dispose();
             }
 
             base.Dispose(disposing);

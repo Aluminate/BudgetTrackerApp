@@ -4,26 +4,23 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="MyBudgetTrackerAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'MyBudgetTrackerApp.dbo.AccountBudgets' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+    <Schema Namespace="MyBudgetTrackerAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AccountBudgets">
           <Key>
             <PropertyRef Name="BudgetId" />
             <PropertyRef Name="UserId" />
-            <PropertyRef Name="IsAccepted" />
-            <PropertyRef Name="CreatedDate" />
           </Key>
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="IsAccepted" Type="bit" Nullable="false" />
+          <Property Name="IsOwner" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="BudgetGoals">
           <Key>
             <PropertyRef Name="BudgetGoalId" />
           </Key>
-          <Property Name="BudgetGoalId" Type="int" Nullable="false" />
+          <Property Name="BudgetGoalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="TimePeriod" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="BudgetAmount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
@@ -34,24 +31,21 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.AccountBudgets' does not ha
           <Key>
             <PropertyRef Name="BudgetId" />
           </Key>
-          <Property Name="BudgetId" Type="int" Nullable="false" />
+          <Property Name="BudgetId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Categories">
           <Key>
             <PropertyRef Name="CategoryId" />
           </Key>
-          <Property Name="CategoryId" Type="int" Nullable="false" />
+          <Property Name="CategoryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="CategoryGoals">
           <Key>
             <PropertyRef Name="CategoryId" />
             <PropertyRef Name="BudgetGoalId" />
-            <PropertyRef Name="BudgetAmount" />
           </Key>
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="BudgetGoalId" Type="int" Nullable="false" />
@@ -61,7 +55,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="ExpenseId" />
           </Key>
-          <Property Name="ExpenseId" Type="int" Nullable="false" />
+          <Property Name="ExpenseId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="CategoryId" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="100" Nullable="false" />
@@ -73,7 +67,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="FeedbackId" />
           </Key>
-          <Property Name="FeedbackId" Type="int" Nullable="false" />
+          <Property Name="FeedbackId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="IsTestimonial" Type="bit" Nullable="false" />
           <Property Name="IsHidden" Type="bit" Nullable="false" />
@@ -84,7 +78,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="IncomeId" />
           </Key>
-          <Property Name="IncomeId" Type="int" Nullable="false" />
+          <Property Name="IncomeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
@@ -94,7 +88,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="PeriodicIncomeId" />
           </Key>
-          <Property Name="PeriodicIncomeId" Type="int" Nullable="false" />
+          <Property Name="PeriodicIncomeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BudgetId" Type="int" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Amount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
@@ -210,28 +204,15 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MyBudgetTrackerAppModelStoreContainer">
+          <EntitySet Name="AccountBudgets" EntityType="Self.AccountBudgets" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BudgetGoals" EntityType="Self.BudgetGoals" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Budgets" EntityType="Self.Budgets" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CategoryGoals" EntityType="Self.CategoryGoals" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Expenses" EntityType="Self.Expenses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Income" EntityType="Self.Income" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PeriodicIncome" EntityType="Self.PeriodicIncome" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="AccountBudgets" EntityType="Self.AccountBudgets" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [AccountBudgets].[BudgetId] AS [BudgetId], 
-    [AccountBudgets].[UserId] AS [UserId], 
-    [AccountBudgets].[IsAccepted] AS [IsAccepted], 
-    [AccountBudgets].[CreatedDate] AS [CreatedDate]
-    FROM [dbo].[AccountBudgets] AS [AccountBudgets]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="CategoryGoals" EntityType="Self.CategoryGoals" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [CategoryGoals].[CategoryId] AS [CategoryId], 
-    [CategoryGoals].[BudgetGoalId] AS [BudgetGoalId], 
-    [CategoryGoals].[BudgetAmount] AS [BudgetAmount]
-    FROM [dbo].[CategoryGoals] AS [CategoryGoals]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK_AccountBudgets_Budgets" Association="Self.FK_AccountBudgets_Budgets">
             <End Role="Budgets" EntitySet="Budgets" />
             <End Role="AccountBudgets" EntitySet="AccountBudgets" />
@@ -269,8 +250,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
             <End Role="PeriodicIncome" EntitySet="PeriodicIncome" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MyBudgetTrackerAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -278,7 +258,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="BudgetGoalId" />
           </Key>
-          <Property Name="BudgetGoalId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetGoalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="TimePeriod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="BudgetAmount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
@@ -291,7 +271,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="BudgetId" />
           </Key>
-          <Property Name="BudgetId" Type="Int32" Nullable="false" />
+          <Property Name="BudgetId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="BudgetGoals" Relationship="Self.FK_BudgetGoals_Budgets" FromRole="Budgets" ToRole="BudgetGoals" />
           <NavigationProperty Name="AccountBudgets" Relationship="Self.FK_AccountBudgets_Budgets" FromRole="Budgets" ToRole="AccountBudgets" />
@@ -304,7 +284,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="CategoryId" />
           </Key>
-          <Property Name="CategoryId" Type="Int32" Nullable="false" />
+          <Property Name="CategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Budget" Relationship="Self.FK_Budgets_BudgetId" FromRole="Categories" ToRole="Budgets" />
@@ -315,7 +295,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="ExpenseId" />
           </Key>
-          <Property Name="ExpenseId" Type="Int32" Nullable="false" />
+          <Property Name="ExpenseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="CategoryId" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
@@ -329,7 +309,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="FeedbackId" />
           </Key>
-          <Property Name="FeedbackId" Type="Int32" Nullable="false" />
+          <Property Name="FeedbackId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IsTestimonial" Type="Boolean" Nullable="false" />
           <Property Name="IsHidden" Type="Boolean" Nullable="false" />
@@ -340,7 +320,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="IncomeId" />
           </Key>
-          <Property Name="IncomeId" Type="Int32" Nullable="false" />
+          <Property Name="IncomeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
@@ -351,7 +331,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="PeriodicIncomeId" />
           </Key>
-          <Property Name="PeriodicIncomeId" Type="Int32" Nullable="false" />
+          <Property Name="PeriodicIncomeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Amount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
@@ -363,20 +343,18 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <Key>
             <PropertyRef Name="BudgetId" />
             <PropertyRef Name="UserId" />
-            <PropertyRef Name="IsAccepted" />
-            <PropertyRef Name="CreatedDate" />
           </Key>
           <Property Name="BudgetId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IsAccepted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Budget" Relationship="Self.FK_AccountBudgets_Budgets" FromRole="AccountBudgets" ToRole="Budgets" />
+          <Property Name="IsOwner" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="CategoryGoal">
           <Key>
             <PropertyRef Name="CategoryId" />
             <PropertyRef Name="BudgetGoalId" />
-            <PropertyRef Name="BudgetAmount" />
           </Key>
           <Property Name="CategoryId" Type="Int32" Nullable="false" />
           <Property Name="BudgetGoalId" Type="Int32" Nullable="false" />
@@ -625,6 +603,7 @@ warning 6002: The table/view 'MyBudgetTrackerApp.dbo.CategoryGoals' does not hav
           <EntitySetMapping Name="AccountBudgets">
             <EntityTypeMapping TypeName="MyBudgetTrackerAppModel.AccountBudget">
               <MappingFragment StoreEntitySet="AccountBudgets">
+                <ScalarProperty Name="IsOwner" ColumnName="IsOwner" />
                 <ScalarProperty Name="BudgetId" ColumnName="BudgetId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="IsAccepted" ColumnName="IsAccepted" />
