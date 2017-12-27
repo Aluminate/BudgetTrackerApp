@@ -1,0 +1,64 @@
+﻿@model IEnumerable<BudgetTrackerApp.Expense>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PictureUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Budget.BudgetId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PictureUrl)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Budget.BudgetId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Category.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ExpenseId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ExpenseId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ExpenseId })
+        </td>
+    </tr>
+}
+
+</table>
