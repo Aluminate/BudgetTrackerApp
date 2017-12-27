@@ -74,13 +74,20 @@ namespace BudgetTrackerApp.Controllers
             {
                 return View(model);
             }
-
+            
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    if (Request.Cookies["BudgetId"] == null)
+                    {
+                        HttpCookie cookie = new HttpCookie("BudgetId");
+                        var userId = SignInManager.AuthenticationManager.AuthenticationResponseGrant.Identity.GetUserId();
+                        cookie.Value = db.AccountBudgets.Single(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId.ToString();
+                        Response.Cookies.Add(cookie);
+                    }
                     return RedirectToAction("Dashboard", "Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");

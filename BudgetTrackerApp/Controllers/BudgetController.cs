@@ -15,8 +15,10 @@ namespace BudgetTrackerApp.Controllers
         // GET: Expenses
         public ActionResult Expenses()
         {
-            
-            return View();
+            ExpensesViewModel viewModel = new ExpensesViewModel();
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            viewModel.Categories = db.Categories.Where(c => c.BudgetId == budgetId).ToList();
+            return View(viewModel);
         }
 
         // GET: Income
