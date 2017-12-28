@@ -23,7 +23,7 @@ namespace BudgetTrackerApp.Controllers
                         Value = c.CategoryId.ToString(),
                         Text = c.Name
                     }).ToList();
-            viewModel.Expenses = db.Expenses.Where(e => e.BudgetId == budgetId).ToList();
+            viewModel.Expenses = db.Expenses.Where(e => e.BudgetId == budgetId).OrderByDescending(e => e.Date).ToList();
             return View(viewModel);
         }
 
@@ -58,6 +58,24 @@ namespace BudgetTrackerApp.Controllers
                 newExpense.Date = date;
                 newExpense.Amount = (decimal)amount;
                 db.Expenses.Add(newExpense);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Expenses");
+        }
+
+        // POST: EditExpense
+        [HttpPost]
+        public ActionResult EditExpense(int expenseId, DateTime date, string categoryId, string description, float amount)
+        {
+            if (ModelState.IsValid)
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                Expense editExpense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
+                editExpense.CategoryId = Convert.ToInt32(categoryId);
+                editExpense.BudgetId = budgetId;
+                editExpense.Description = description;
+                editExpense.Date = date;
+                editExpense.Amount = (decimal)amount;
                 db.SaveChanges();
             }
             return RedirectToAction("Expenses");

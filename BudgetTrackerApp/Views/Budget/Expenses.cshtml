@@ -4,12 +4,11 @@
 }
 @model BudgetTrackerApp.Models.ExpensesViewModel
 
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <script>
     $(document).ready(function () {
-        $("incomeTable").dataTable();
         $('#editCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('#categoryName').val($("#CategoryId option:selected").text());
@@ -20,6 +19,20 @@
             modal.find('#categoryName').text($("#CategoryId option:selected").text());
             modal.find('#categoryId').val($("#CategoryId").val());
         })
+        $('#editExpenseModal').on('show.bs.modal', function (event) {
+            var expenseId = $(event.relatedTarget).closest('tr').data('expense-id');
+            var description = $(event.relatedTarget).closest('tr').data('description');
+            var categoryId = $(event.relatedTarget).closest('tr').data('category-id');
+            var date = $(event.relatedTarget).closest('tr').data('date');
+            var amount = $(event.relatedTarget).closest('tr').data('amount');
+            var modal = $(this);
+
+            modal.find('input[name=expenseId]').val(expenseId);
+            modal.find('input[name=description]').val(description);
+            modal.find('select[name=CategoryId]').val(categoryId);
+            modal.find('input[name=amount]').val(amount);
+            modal.find('input[name=date]').val(date);
+        })
     });
 
 </script>
@@ -28,27 +41,35 @@
 </div>
 
 <div class="row">
-    <div id="incomeTable" class="col-lg-10">
-        <table class="table" id="expenses">
-            <tr>
-                <th>@Html.DisplayName("Description")</th>
-                <th>@Html.DisplayName("Category")</th>
-                <th>@Html.DisplayName("Date")</th>
-                <th>@Html.DisplayName("Amount ($)")</th>
-                <th>@Html.DisplayName("Actions")</th>
-            </tr>
-
-            @foreach (var expense in Model.Expenses)
-            {
+    <div class="col-lg-10">
+        <table class="table" id="expenseTable">
+            <thead>
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => expense.Description)</td>
-                    <td>@Html.DisplayFor(modelItem => expense.Category.Name)</td>
-                    <td>@expense.Date.ToString("dd/MM/yyyy")</td>
-                    <td>@Html.DisplayFor(modelItem => expense.Amount)</td>
-                    <td><i class="fa fa-trash"></i></td>
+                    <th>@Html.DisplayName("Description")</th>
+                    <th>@Html.DisplayName("Category")</th>
+                    <th>@Html.DisplayName("Date")</th>
+                    <th>@Html.DisplayName("Amount ($)")</th>
+                    <th>@Html.DisplayName("Actions")</th>
                 </tr>
-            }
-        </table>
+            </thead>
+            <tbody>
+                @foreach (var expense in Model.Expenses)
+                {
+                    <tr data-expense-id="@expense.ExpenseId" data-description="@expense.Description" data-category-id="@expense.CategoryId" data-date="@expense.Date.ToString("yyyy-MM-dd")" data-amount="@expense.Amount">
+                        <td>@Html.DisplayFor(modelItem => expense.Description)</td>
+                        <td>@Html.DisplayFor(modelItem => expense.Category.Name)</td>
+                        <td>@expense.Date.ToString("dd/MM/yyyy")</td>
+                        <td>@Html.DisplayFor(modelItem => expense.Amount)</td>
+                        <td>
+                            <i class="fa fa-picture-o"></i>
+                            <i class="fa fa-upload"></i>
+                            <i class="fa fa-pencil" title="Edit" data-toggle="modal" data-target="#editExpenseModal"></i>
+                            <i class="fa fa-trash" title="Delete" data-toggle="modal" data-target="#deleteExpenseModal"></i>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+</table>
     </div>
     <div class="col-lg-2">
         <div id="buttons">
@@ -64,8 +85,6 @@
 <!-- Add Expense Modal -->
 <div id="addExpenseModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -75,25 +94,54 @@
                 <form method="post" action="CreateExpense">
                     <fieldset>
                         <legend>Expense Information</legend>
-                        <p>
-                            <label for="date">Date:</label>
-                            <input type="date" name="date" required>
-                        </p>
+                        <label for="date">Date:</label>
+                        <input type="date" name="date" required><br />
 
-                        <p>
-                            <label for="CategoryId">Category:</label>
-                            @Html.DropDownList("CategoryId", Model.Categories);
-                        </p>
+                        <label for="CategoryId">Category:</label>
+                        @Html.DropDownList("CategoryId", Model.Categories)<br />
 
-                        <p>
-                            <label for="description">Description:</label>
-                            <input type="text" name="description" required/>
-                        </p>
+                        <label for="description">Description:</label>
+                        <input type="text" name="description" required/><br />
+                        
+                        <label for="amount">Amount ($):</label>
+                        <input type="number" step="any" name="amount" required/><br />
+                        
+                        <input type="submit" class="btn btn-default" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <p>
-                            <label for="amount">Amount ($):</label>
-                            <input type="number" step="any" name="amount" required/>
-                        </p>
+<!-- Edit Expense Modal -->
+<div id="editExpenseModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Expense</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="EditExpense">
+                    <fieldset>
+                        <legend>Expense Information</legend>
+
+                        <input type="hidden" name="expenseId" required><br />
+
+                        <label for="date">Date:</label>
+                        <input type="date" name="date" required><br />
+
+                        <label for="CategoryId">Category:</label>
+                        @Html.DropDownList("CategoryId", Model.Categories)<br />
+
+                        <label for="description">Description:</label>
+                        <input type="text" name="description" required /><br />
+
+                        <label for="amount">Amount ($):</label>
+                        <input type="number" step="any" name="amount" required /><br />
+
                         <input type="submit" class="btn btn-default" />
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </fieldset>
