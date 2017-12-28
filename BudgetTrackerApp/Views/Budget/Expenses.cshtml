@@ -2,13 +2,23 @@
     ViewBag.Title = "Expenses";
     var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
+@model BudgetTrackerApp.Models.ExpensesViewModel
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
 
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#incomeTable').DataTable();
+        $('#editCategoryModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('#categoryName').val($("#CategoryId option:selected").text());
+            modal.find('#categoryId').val($("#CategoryId").val());
+        })
+        $('#deleteCategoryModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('#categoryName').text($("#CategoryId option:selected").text());
+            modal.find('#categoryId').val($("#CategoryId").val());
+        })
     });
 
 </script>
@@ -21,7 +31,7 @@
     <div class="col-lg-4">
         <div id="buttons">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addExpenseModal">Add Expense</button>
-            <button type="button" class="btn btn-default">Categories</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#categoriesModal">Categories</button>
             <button type="button" class="btn btn-default">Export to Excel</button>
         </div>
         <div id="filter">
@@ -40,27 +50,29 @@
                 <h4 class="modal-title">Add Expense</h4>
             </div>
             <div class="modal-body">
-                <p>Some text in the modal.</p>
-                <form method="post">
+                <form method="post" action="CreateExpense">
                     <fieldset>
                         <legend>Expense Information</legend>
                         <p>
-                            <label for="category">Category:</label>
-                            <input type="text" name="category" value="@Request.Form["category"]" />
+                            <label for="date">Date:</label>
+                            <input type="date" name="date">
+                        </p>
+
+                        <p>
+                            <label for="CategoryId">Category:</label>
+                            @Html.DropDownList("CategoryId", Model.Categories);
                         </p>
 
                         <p>
                             <label for="description">Description:</label>
-                            <input type="text" name="description" value="@Request.Form["description"]" />
+                            <input type="text" name="description" />
                         </p>
 
                         <p>
-                            <label for="amount">Amount:</label>
-                            <span class="input-group-addon">$</span>
-                            <input type="text" name="amount" value="@Request.Form["amount"]" />
+                            <label for="amount">Amount ($):</label>
+                            <input type="number" step="any" name="amount" />
                         </p>
-
-                        <p><input type="submit" name="buttonSubmit" value="Add Expense" /></p>
+                        <p><input type="submit" /></p>
                     </fieldset>
                 </form>
             </div>
@@ -72,9 +84,8 @@
 </div>
 
 <!-- Categories Modal -->
-<div id="CategoriesModal" class="modal fade" role="dialog">
+<div id="categoriesModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -82,32 +93,81 @@
                 <h4 class="modal-title">Categories</h4>
             </div>
             <div class="modal-body">
-                <p>Some text in the modal.</p>
-                <form method="post">
-                    <fieldset>
-                        <legend>Expense Information</legend>
-                        <p>
-                            <label for="category">Category:</label>
-                            <input type="text" name="category" value="@Request.Form["category"]" />
-                        </p>
-
-                        <p>
-                            <label for="description">Description:</label>
-                            <input type="text" name="description" value="@Request.Form["description"]" />
-                        </p>
-
-                        <p>
-                            <label for="amount">Amount:</label>
-                            <span class="input-group-addon">$</span>
-                            <input type="text" name="amount" value="@Request.Form["amount"]" />
-                        </p>
-
-                        <p><input type="submit" name="buttonSubmit" value="Add Expense" /></p>
-                    </fieldset>
-                </form>
+                <div class="row">
+                    <div class="col-lg-8">
+                        @Html.DropDownList("CategoryId", Model.Categories, new { @size = 15 });
+                    </div>
+                    <div class="col-lg-4">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addCategoryModal">Add</button>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editCategoryModal">Edit</button>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#deleteCategoryModal">Delete</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div id="addCategoryModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Category</h4>
+            </div>
+            <div class="modal-body">
+                <form action="CreateCategory" method="post">
+                    <input type="text" name="categoryName" id="categoryName">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div id="editCategoryModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Category</h4>
+            </div>
+            <div class="modal-body">
+                <form action="EditCategory" method="post">
+                    <input type="hidden" name="categoryId" id="categoryId">
+                    <input type="text" name="categoryName" id="categoryName">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Category Modal -->
+<div id="deleteCategoryModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Category</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete category: <span id="categoryName"></span></p>
+                <form action="DeleteCategory" method="post">
+                    <input type="hidden" name="categoryId" id="categoryId">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
             </div>
         </div>
     </div>
