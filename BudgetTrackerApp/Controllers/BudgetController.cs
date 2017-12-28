@@ -81,6 +81,20 @@ namespace BudgetTrackerApp.Controllers
             return RedirectToAction("Expenses");
         }
 
+        // POST: DeleteExpense
+        [HttpPost]
+        public ActionResult DeleteExpense(int expenseId)
+        {
+            if (ModelState.IsValid)
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                Expense expense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
+                db.Expenses.Remove(expense);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Expenses");
+        }
+
         // POST: CreateCategory
         [HttpPost]
         public ActionResult CreateCategory(string categoryName)
