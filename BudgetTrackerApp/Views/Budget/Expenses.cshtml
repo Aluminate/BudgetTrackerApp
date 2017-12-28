@@ -9,6 +9,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <script>
     $(document).ready(function () {
+        $("incomeTable").dataTable();
         $('#editCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('#categoryName').val($("#CategoryId option:selected").text());
@@ -27,8 +28,29 @@
 </div>
 
 <div class="row">
-    <div id="incomeTable" class="col-lg-8"></div>
-    <div class="col-lg-4">
+    <div id="incomeTable" class="col-lg-10">
+        <table class="table" id="expenses">
+            <tr>
+                <th>@Html.DisplayName("Description")</th>
+                <th>@Html.DisplayName("Category")</th>
+                <th>@Html.DisplayName("Date")</th>
+                <th>@Html.DisplayName("Amount ($)")</th>
+                <th>@Html.DisplayName("Actions")</th>
+            </tr>
+
+            @foreach (var expense in Model.Expenses)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => expense.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => expense.Category.Name)</td>
+                    <td>@expense.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@Html.DisplayFor(modelItem => expense.Amount)</td>
+                    <td><i class="fa fa-trash"></i></td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="col-lg-2">
         <div id="buttons">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addExpenseModal">Add Expense</button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#categoriesModal">Categories</button>
@@ -55,7 +77,7 @@
                         <legend>Expense Information</legend>
                         <p>
                             <label for="date">Date:</label>
-                            <input type="date" name="date">
+                            <input type="date" name="date" required>
                         </p>
 
                         <p>
@@ -65,19 +87,17 @@
 
                         <p>
                             <label for="description">Description:</label>
-                            <input type="text" name="description" />
+                            <input type="text" name="description" required/>
                         </p>
 
                         <p>
                             <label for="amount">Amount ($):</label>
-                            <input type="number" step="any" name="amount" />
+                            <input type="number" step="any" name="amount" required/>
                         </p>
-                        <p><input type="submit" /></p>
+                        <input type="submit" class="btn btn-default" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </fieldset>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
