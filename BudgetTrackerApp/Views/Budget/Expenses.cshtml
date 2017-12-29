@@ -13,12 +13,12 @@
             var modal = $(this);
             modal.find('#categoryName').val($("#CategoryId option:selected").text());
             modal.find('#categoryId').val($("#CategoryId").val());
-        })
+        });
         $('#deleteCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('#categoryName').text($("#CategoryId option:selected").text());
             modal.find('#categoryId').val($("#CategoryId").val());
-        })
+        });
         $('#editExpenseModal').on('show.bs.modal', function (event) {
             var expenseId = $(event.relatedTarget).closest('tr').data('expense-id');
             var description = $(event.relatedTarget).closest('tr').data('description');
@@ -32,7 +32,7 @@
             modal.find('select[name=CategoryId]').val(categoryId);
             modal.find('input[name=amount]').val(amount);
             modal.find('input[name=date]').val(date);
-        })
+        });
 
         $('#deleteExpenseModal').on('show.bs.modal', function (event) {
             var expenseId = $(event.relatedTarget).closest('tr').data('expense-id');
@@ -47,7 +47,7 @@
             modal.find('select[name=CategoryId]').val(categoryId);
             modal.find('input[name=amount]').val(amount);
             modal.find('input[name=date]').val(date);
-        })
+        });
     });
 
 </script>
