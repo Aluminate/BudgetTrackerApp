@@ -2,6 +2,7 @@
     ViewBag.Title = "Dashboard";
     var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
+@model BudgetTrackerApp.Models.DashboardViewModel
 
 <div class="jumbotron">
     
@@ -12,8 +13,31 @@
     <p>Progress Bar Placeholder</p>
 </div>
 
-<div class="row">
-    
+<div class="row">   
+    <div class="col-lg-6"> 
+        <div class="panel panel-default">
+            <div class="panel-heading">Quick Add Expense:</div>
+            <div class="panel-body">
+                <form method="post" action="CreateExpense">
+                    <fieldset>
+                        <label for="date">Date:</label>
+                        <input type="date" name="date" required><br />
+
+                        <label for="CategoryId">Category:</label>
+                        @Html.DropDownList("CategoryId", Model.Categories)<br />
+
+                        <label for="description">Description:</label>
+                        <input type="text" name="description" required /><br />
+
+                        <label for="amount">Amount ($):</label>
+                        <input type="number" step="any" name="amount" required /><br />
+
+                        <input type="submit" class="btn btn-default pull-right" value="Add" />
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">

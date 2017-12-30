@@ -207,6 +207,7 @@ namespace BudgetTrackerApp.Controllers
             return RedirectToAction("Expenses");
         }
 
+        // Checks if user should have access to this budgetId
         private bool checkBudgetId()
         {
             var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BudgetTrackerApp.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,18 @@ namespace BudgetTrackerApp.Controllers
         [Authorize]
         public ActionResult Dashboard()
         {
-            return View();
+            DashboardViewModel viewModel = new DashboardViewModel();
+            if (checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                viewModel.Categories = db.Categories.Where(c => c.BudgetId == budgetId)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    }).ToList();
+            }
+            return View(viewModel);
         }
 
         // POST: CreateFeedback
@@ -44,6 +56,24 @@ namespace BudgetTrackerApp.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        // POST: CreateExpense
+        [HttpPost]
+        public ActionResult CreateExpense(DateTime date, string categoryId, string description, float amount)
+        {
+            if (ModelState.IsValid && checkBudgetId())
+            {
+                Expense newExpense = new Expense();
+                newExpense.CategoryId = Convert.ToInt32(categoryId);
+                newExpense.BudgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                newExpense.Description = description;
+                newExpense.Date = date;
+                newExpense.Amount = (decimal)amount;
+                db.Expenses.Add(newExpense);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Dashboard");
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -56,6 +86,15 @@ namespace BudgetTrackerApp.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        // Checks if user should have access to this budgetId
+        private bool checkBudgetId()
+        {
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var userId = User.Identity.GetUserId();
+            var accountBudget = db.AccountBudgets.FirstOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
+            return accountBudget != null;
         }
 
         protected override void Dispose(bool disposing)
