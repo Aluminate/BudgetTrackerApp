@@ -17,8 +17,8 @@
             data: '{}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: function (r) {
-                var data = google.visualization.arrayToDataTable(r);
+            success: function (response) {
+                var data = google.visualization.arrayToDataTable(response);
 
                 //Pie
                 var options = {
@@ -27,11 +27,11 @@
                 var chart = new google.visualization.PieChart($("#piechartdiv")[0]);
                 chart.draw(data, options);
             },
-            failure: function (r) {
-                alert(r.d);
+            failure: function (response) {
+                alert(response.d);
             },
             error: function (r) {
-                alert(r.d);
+                alert(response.d);
             }
         })
     };
