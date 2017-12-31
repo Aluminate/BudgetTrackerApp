@@ -34,6 +34,7 @@ namespace BudgetTrackerApp.Controllers
                         Value = c.CategoryId.ToString(),
                         Text = c.Name
                     }).ToList();
+
             }
             return View(viewModel);
         }
@@ -44,7 +45,7 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                Feedback feedback = new Feedback();
+                var feedback = new Feedback();
                 feedback.IsTestimonial = isPublic;
                 feedback.Message = comment;
                 feedback.IsHidden = false;
@@ -62,7 +63,7 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid && checkBudgetId())
             {
-                Expense newExpense = new Expense();
+                var newExpense = new Expense();
                 newExpense.CategoryId = Convert.ToInt32(categoryId);
                 newExpense.BudgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 newExpense.Description = description;
@@ -72,6 +73,32 @@ namespace BudgetTrackerApp.Controllers
                 db.SaveChanges();
             }
             return RedirectToAction("Dashboard");
+        }
+
+        [HttpPost]
+        public JsonResult getMonthlyExpenses()
+        {
+           
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var chartData = new List<object>();
+            if (checkBudgetId())
+            {
+                chartData.Add(new object[]
+                {
+                    "Category", "Amount ($)"
+                });
+                var dateNow = DateTime.Now;
+                var beginningOfMonth = dateNow.AddMonths(1 - dateNow.Day);
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId && e.Date > beginningOfMonth);
+                var allCategories = expenses.Select(e => e.Category.Name).Distinct();
+                allCategories.ToList().ForEach(data =>
+                    chartData.Add(new object[]
+                        {
+                        data, expenses.Where(e => e.Category.Name == data).Sum(e => e.Amount)
+                        })
+                );
+            }
+            return Json(chartData);
         }
 
         public ActionResult About()

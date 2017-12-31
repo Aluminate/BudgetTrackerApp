@@ -4,8 +4,42 @@
 }
 @model BudgetTrackerApp.Models.DashboardViewModel
 
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+    // Load the Visualization API library and the piechart library.
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        $.ajax({
+            type: "POST",
+            url: "getMonthlyExpenses",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (r) {
+                var data = google.visualization.arrayToDataTable(r);
+
+                //Pie
+                var options = {
+                    title: 'Expenses This Month'
+                };
+                var chart = new google.visualization.PieChart($("#piechartdiv")[0]);
+                chart.draw(data, options);
+            },
+            failure: function (r) {
+                alert(r.d);
+            },
+            error: function (r) {
+                alert(r.d);
+            }
+        })
+    };
+
+
+</script>
+
 <div class="jumbotron">
-    
     <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Dashboard</h1>
 </div>
 
@@ -14,7 +48,7 @@
 </div>
 
 <div class="row">   
-    <div class="col-lg-6"> 
+    <div class="col-lg-4"> 
         <div class="panel panel-default">
             <div class="panel-heading">Quick Add Expense:</div>
             <div class="panel-body">
@@ -37,6 +71,9 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div class="col-lg-8">
+        <div id="piechartdiv"></div>
     </div>
 </div>
 
