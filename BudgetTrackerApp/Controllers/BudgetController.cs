@@ -58,7 +58,18 @@ namespace BudgetTrackerApp.Controllers
         // GET: Calculator
         public ActionResult Calculator()
         {
-            return View();
+            CalculatorsViewModel viewModel = new CalculatorsViewModel();
+            if (checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                viewModel.Categories = db.Categories.Where(c => c.BudgetId == budgetId)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    }).ToList();
+            }
+            return View(viewModel);
         }
 
         // POST: CreateExpense

@@ -17,4 +17,9 @@ namespace BudgetTrackerApp.Models
         public IEnumerable<SelectListItem> PeriodicIncome { get; set; }
         public List<Income> IncomeList { get; set; }
     }
+
+    public class CalculatorsViewModel
+    {
+        public IEnumerable<SelectListItem> Categories { get; set; }
+    }
 }

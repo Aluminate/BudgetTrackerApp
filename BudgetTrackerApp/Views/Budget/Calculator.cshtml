@@ -2,15 +2,240 @@
     ViewBag.Title = "Calculator";
     var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
+@model BudgetTrackerApp.Models.CalculatorsViewModel
+<script>
+    var userBudget = 0;
+    var daysMultiplier = 30.42;
+    $(document).ready(function() {
+        $('select[name=calculatorType]').change(function () {
+            $('#budgetGoal').hide();
+            $('#totalIncome').hide();
+            $('#spendingByCategory').hide();
+            switch ($('select[name=calculatorType]').val()) {
+                case 'budgetGoal':
+                    $('#budgetGoal').show();
+                    break;
+                case 'totalIncome':
+                    $('#totalIncome').show();
+                    break;
+                case 'spendingByCategory':
+                    $('#spendingByCategory').show();
+                    break;
+                default:
+                    alert("An error has occurred.");
+            }
+        });
 
+        $('#calculatorLengthOfTime').change(function () {
+            switch ($('#calculatorLengthOfTime').val()) {
+                case 'daily':
+                    $(".lengthOfTimeText").text("Day");
+                    daysMultiplier = 1;
+                    break;
+                case 'weekly':
+                    $(".lengthOfTimeText").text("Week");
+                    daysMultiplier = 7;
+                    break;
+                case 'bi-weekly':
+                    $(".lengthOfTimeText").text("2 Weeks");
+                    daysMultiplier = 14;
+                    break;
+                case 'monthly':
+                    $(".lengthOfTimeText").text("Month");
+                    daysMultiplier = 30.42;
+                    break;
+                case 'yearly':
+                    $(".lengthOfTimeText").text("Year");
+                    daysMultiplier = 365.25;
+                    break;
+                default:
+                    alert("An error has occurred.");
+            }
+        });
+
+        $('#calculateBudgetGoal').click(function () {
+            var incomeAmount = $('#incomeAmount').val();
+            var savingsgGoal = $("input[name=savingsGoal]").val();
+            switch ($('select[name=incomePeriod]').val()) {
+                case 'daily':
+                    userBudget = incomeAmount * daysMultiplier - savingsgGoal;
+                    break;
+                case 'weekly':
+                    userBudget = incomeAmount / 7 * daysMultiplier - savingsgGoal;
+                    break;
+                case 'bi-weekly':
+                    userBudget = incomeAmount / 14 * daysMultiplier - savingsgGoal;
+                    break;
+                case 'monthly':
+                    userBudget = incomeAmount / 30.42 * daysMultiplier - savingsgGoal;
+                    break;
+                case 'yearly':
+                    userBudget = incomeAmount / 365.25 * daysMultiplier - savingsgGoal;
+                    break;
+                default:
+                    alert("An error has occurred.");
+            }
+            userBudget = userBudget.toFixed(2); // 2 decimal places
+            $("#budgetText").text(userBudget);
+        });
+
+        $('#calculateTotalIncome').click(function () {
+            var totalIncome = 0;
+            $(".incomeSourceSet").each(function () {
+                var incomeAmount = $(this).find("input[name=incomeAmount]").val();
+                switch ($(this).find("select[name=lengthOfTime]").val()) {
+                    case 'daily':
+                        totalIncome += incomeAmount * daysMultiplier;
+                        break;
+                    case 'weekly':
+                        totalIncome += incomeAmount / 7 * daysMultiplier;
+                        break;
+                    case 'bi-weekly':
+                        totalIncome += incomeAmount / 14 * daysMultiplier;
+                        break;
+                    case 'monthly':
+                        totalIncome += incomeAmount / 30.42 * daysMultiplier;
+                        break;
+                    case 'yearly':
+                        totalIncome += incomeAmount / 365.25 * daysMultiplier;
+                        break;
+                    default:
+                        alert("An error has occurred.");
+                }
+            });
+            totalIncome = totalIncome.toFixed(2); // 2 decimal places
+            $("#totalIncomeText").text(totalIncome);
+        });
+
+        $('#addAnotherSource').click(function () {
+            $("#incomeSources").append(
+                "<div class='incomeSourceSet'>\
+                <label for='source'>Income Source:</label>\
+                    <input type='text' name='source' /><br />\
+                    <label for='lengthOfTime'>Income Period:</label>\
+                    <select name='lengthOfTime'>\
+                        <option value='daily'>Daily</option>\
+                        <option value='weekly' selected>Weekly</option>\
+                        <option value='bi-weekly'>Bi-weekly</option>\
+                        <option value='monthly' default>Monthly</option>\
+                        <option value='yearly'>Yearly</option>\
+                    </select><br />\
+                    <label for='incomeAmount'>Income Amount:</label>\
+                    <input type='number' name='incomeAmount' /><br /><br />\
+                    </div>"
+            );
+        });
+
+        $('#addAnotherCategory').click(function () {
+            $("#spendingCategories").append(
+                $('#categorySetTemplate').html()
+            );
+        });
+
+        $('#calculateRemainingBudget').click(function () {
+            var totalBudget = $("#totalBudget").val();
+            var totalExpenses = 0;
+            $(".spendingCategorySet").each(function () {
+                var expenseAmount = $(this).find("input[name=expenseAmount]").val();
+                totalExpenses += parseFloat(expenseAmount);
+            });
+            var remainingBudget = totalBudget - totalExpenses;
+            remainingBudget = remainingBudget.toFixed(2); // 2 decimal places
+            $("#remainingBudget").text(remainingBudget);
+        });
+    });
+</script>
 <div class="jumbotron">
     <h1 class="text-center">Calculator</h1>
 </div>
 
 <div class="row">
+    <div class="panel panel-default col-lg-6 col-lg-offset-3">
+        <div class="panel-body">
+            <select name="calculatorType">
+                <option value="budgetGoal" selected>Budget Goal</option>
+                <option value="totalIncome">Total Income</option>
+                <option value="spendingByCategory">Spending By Category</option>
+            </select>
 
+            <select name="lengthOfTime" class="pull-right" id="calculatorLengthOfTime">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="bi-weekly">Bi-weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select><br /><br />
+            
+            <!-- First Calculator -->
+            <div id="budgetGoal">
+                <label for="incomePeriod">Income Period:</label>
+                <select name="incomePeriod">
+                    <option value="daily">Daily</option>
+                    <option value="weekly" selected>Weekly</option>
+                    <option value="bi-weekly">Bi-weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select><br />
+
+                <label for="amount">Income Amount:</label>
+                <input type="text" name="amount" id="incomeAmount" /><br />
+
+                <label for="savingsGoal">Savings Goal per <span class="lengthOfTimeText">Month</span>:</label>
+                <input type="number" name="savingsGoal" /><br />
+
+                <button id="calculateBudgetGoal" class="btn btn-default pull-right">Calculate</button><br /><br />
+
+                <strong>Budget per <span class="lengthOfTimeText">Month</span>: $<span id="budgetText">0.00</span></strong>
+            </div>
+
+            <!-- Second Calculator -->
+            <div id="totalIncome" hidden>
+                <div id="incomeSources">
+                    <div class="incomeSourceSet">
+                        <label for="source">Income Source:</label>
+                        <input type="text" name="source" /><br />
+
+                        <label for="lengthOfTime">Income Period:</label>
+                        <select name="lengthOfTime">
+                            <option value="daily">Daily</option>
+                            <option value="weekly" selected>Weekly</option>
+                            <option value="bi-weekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select><br />
+
+                        <label for="incomeAmount">Income Amount:</label>
+                        <input type="number" name="incomeAmount" /><br /><br />
+                    </div>
+                </div>
+                <button id="addAnotherSource" class="btn btn-default pull-right">Add Another Source</button><br /><br />
+                <button id="calculateTotalIncome" class="btn btn-default pull-right">Calculate</button><br /><br />
+                <strong>Income per <span class="lengthOfTimeText">Month</span>: $<span id="totalIncomeText">0.00</span></strong>
+            </div>
+
+            <!-- Third Calculator -->
+            <div id="spendingByCategory" hidden>
+                <div id="spendingCategories">
+                    <label for="budget">Budget by <span class="lengthOfTimeText">Month</span> ($):</label>
+                    <input type="number" name="budget" id="totalBudget" /><br />
+                    <strong>Spending:</strong><br />
+                    <div class="spendingCategorySet">
+                        @Html.DropDownList("CategoryId", Model.Categories)
+                        <input type="number" name="expenseAmount" /><br />
+                    </div>
+                </div>
+
+                <button id="addAnotherCategory" class="btn btn-default pull-right">Add Another Category</button><br /><br />
+                <button id="calculateRemainingBudget" class="btn btn-default pull-right">Calculate</button><br /><br />
+                <strong>Remaining Budget: $<span id="remainingBudget">0.00</span></strong>
+            </div>
+                </div>
+            </div>
 </div>
 
-<div class="row">
-
-</div>
+<script id="categorySetTemplate" type="text/template">
+    <div class="spendingCategorySet">
+        @Html.DropDownList("CategoryId", Model.Categories)
+        <input type="number" name="expenseAmount" /><br />
+    </div>
+</script>
