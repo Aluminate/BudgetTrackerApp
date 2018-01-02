@@ -12,9 +12,28 @@
 </div>
 
 <div class="row">
+    <div id="chartArea" class="col-lg-6">
+    </div>
+    <div id="menuArea" class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <strong>Time Range:</strong><br />
+                <label for="timeRangeStart">Start:</label>
+                <input type="date" name="timeRangeStart" /><br />
 
-</div>
+                <label for="timeRangeEnd">End:</label>
+                <input type="date" name="timeRangeEnd" /><br />
 
-<div class="row">
+                <label for="dataToDisplay">Data:</label>
+                <select>
+                    <option value="expensesUserCategories">Expenses by User Categories</option>
+                    <option value="expensesIncomeTime">Expenses and Income over Time</option>
+                    <option value="ExpensesTimeCategory">Expenses over Time by Category</option>
+                    <option value="netOverTime">Income minus Expenses (Net) over Time</option>
+                </select><br />
 
+                
+            </div>
+        </div>
+    </div>
 </div>
