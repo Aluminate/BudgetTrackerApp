@@ -253,6 +253,10 @@
     <Compile Include="Migrations\201710052217072_FirstName.Designer.cs">
       <DependentUpon>201710052217072_FirstName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801020335383_Update ApplicationUser.cs" />
+    <Compile Include="Migrations\201801020335383_Update ApplicationUser.Designer.cs">
+      <DependentUpon>201801020335383_Update ApplicationUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\HomeViewModels.cs" />
@@ -361,6 +365,7 @@
     <Content Include="Views\Expenses\Details.cshtml" />
     <Content Include="Views\Expenses\Edit.cshtml" />
     <Content Include="Views\Expenses\Index.cshtml" />
+    <Content Include="Views\Home\AdminDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -384,6 +389,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710052217072_FirstName.resx">
       <DependentUpon>201710052217072_FirstName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801020335383_Update ApplicationUser.resx">
+      <DependentUpon>201801020335383_Update ApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

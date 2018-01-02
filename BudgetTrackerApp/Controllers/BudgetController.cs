@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace BudgetTrackerApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class BudgetController : Controller
     {
         private MyBudgetTrackerAppEntities db = new MyBudgetTrackerAppEntities();

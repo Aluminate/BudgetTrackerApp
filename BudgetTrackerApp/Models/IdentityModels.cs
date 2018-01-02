@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 
 namespace BudgetTrackerApp.Models
 {
@@ -15,6 +16,8 @@ namespace BudgetTrackerApp.Models
         public string Gender { get; set; }
         public string SecurityQuestion { get; set; }
         public string SecurityQuestionAnswer { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime LastOnlineDate { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

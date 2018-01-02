@@ -81,13 +81,16 @@ namespace BudgetTrackerApp.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var userId = SignInManager.AuthenticationManager.AuthenticationResponseGrant.Identity.GetUserId();
                     if (Request.Cookies["BudgetId"] == null)
                     {
                         HttpCookie cookie = new HttpCookie("BudgetId");
-                        var userId = SignInManager.AuthenticationManager.AuthenticationResponseGrant.Identity.GetUserId();
                         cookie.Value = db.AccountBudgets.Single(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId.ToString();
                         Response.Cookies.Add(cookie);
                     }
+                    var user = UserManager.FindById(userId);
+                    user.LastOnlineDate = DateTime.Now;
+                    UserManager.Update(user);
                     return RedirectToAction("Dashboard", "Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -168,7 +171,9 @@ namespace BudgetTrackerApp.Controllers
                     LastName = model.LastName,
                     SecurityQuestion = model.SecurityQuestion,
                     SecurityQuestionAnswer = hashedSecurityPassword,
-                    Gender = model.Gender
+                    Gender = model.Gender,
+                    CreatedDate = DateTime.Now,
+                    LastOnlineDate = DateTime.Now
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

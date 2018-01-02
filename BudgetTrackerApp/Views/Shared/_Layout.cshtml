@@ -34,7 +34,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @if (Request.IsAuthenticated)
+                    @if (Request.IsAuthenticated && User.IsInRole("User"))
                     {
                         <li>@Html.ActionLink("Dashboard", "Dashboard", "Home")</li>
                         <li>@Html.ActionLink("Expenses", "Expenses", "Budget")</li>
@@ -42,6 +42,13 @@
                         <li>@Html.ActionLink("Statistics", "Statistics", "Budget")</li>
                         <li>@Html.ActionLink("Calculator", "Calculator", "Budget")</li>
                         <li>@Html.ActionLink("Settings", "Settings", "Account")</li>
+                    }
+                    else if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Dashboard", "AdminDashboard", "Home")</li>
+                        <li>@Html.ActionLink("Site Settings", "SiteSettings", "Admin")</li>
+                        <li>@Html.ActionLink("Accounts", "Accounts", "Admin")</li>
+                        <li>@Html.ActionLink("Account Settings", "AccountSettings", "Admin")</li>
                     }
                     else
                     {

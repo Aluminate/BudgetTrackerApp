@@ -24,6 +24,10 @@ namespace BudgetTrackerApp.Controllers
         [Authorize]
         public ActionResult Dashboard()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("AdminDashboard");
+            }
             DashboardViewModel viewModel = new DashboardViewModel();
             if (checkBudgetId())
             {
@@ -37,6 +41,13 @@ namespace BudgetTrackerApp.Controllers
 
             }
             return View(viewModel);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult AdminDashboard()
+        {
+
+            return View();
         }
 
         // POST: CreateFeedback
