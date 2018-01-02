@@ -16,4 +16,21 @@ namespace BudgetTrackerApp.Models
         public int totalUsers { get; set; }
         public int registrationsThisMonth { get; set; }
     }
+
+    public class HomeIndexViewModel
+    {
+        public class testimonial
+        {
+            public testimonial(string message, string name)
+            {
+                this.message = message;
+                this.name = name;
+            }
+
+            public string message;
+            public string name;
+        }
+
+        public List<testimonial> testimonials { get; set; }
+    }
 }

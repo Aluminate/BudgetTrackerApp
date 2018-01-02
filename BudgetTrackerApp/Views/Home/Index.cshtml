@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+@model BudgetTrackerApp.Models.HomeIndexViewModel
 
 <div class="jumbotron">
     <h1 class="text-center">My Budget Tracker</h1>
@@ -20,6 +21,18 @@
         <h2>Screenshots placeholder</h2>
     </div>
     <div class="col-md-4">
-        <h2>Testimonials Placeholder</h2>
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+                @foreach (var testimonial in Model.testimonials)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-body text-center">
+                            <strong>@testimonial.message</strong><br />
+                            <span class="pull-right">-@testimonial.name</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

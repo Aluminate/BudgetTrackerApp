@@ -19,7 +19,19 @@ namespace BudgetTrackerApp.Controllers
             {
                 return RedirectToAction("Dashboard");
             }
-            return View();
+            var viewModel = new HomeIndexViewModel();
+            var context = new ApplicationDbContext();
+            var allUsers = context.Users.ToList();
+            var testimonials = db.Feedbacks.Where(f => f.IsTestimonial == true && f.IsHidden == false).OrderByDescending(f => f.CreatedDate).ToList();
+            var testimonialList = new List<HomeIndexViewModel.testimonial>();
+            testimonials.ForEach(data =>
+            {
+                var user = allUsers.Single(au => au.Id == data.UserId);
+                var nameOfUser = user.FirstName + " " + user.LastName;
+                testimonialList.Add(new HomeIndexViewModel.testimonial(data.Message, nameOfUser));
+            });
+            viewModel.testimonials = testimonialList;
+            return View(viewModel);
         }
 
         [Authorize]
