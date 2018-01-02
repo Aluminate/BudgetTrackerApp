@@ -16,7 +16,7 @@ namespace BudgetTrackerApp.Controllers
         // GET: Expenses
         public ActionResult Expenses()
         {
-            ExpensesViewModel viewModel = new ExpensesViewModel();
+            var viewModel = new ExpensesViewModel();
             if (checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
@@ -34,7 +34,7 @@ namespace BudgetTrackerApp.Controllers
         // GET: Income
         public ActionResult Income()
         {
-            IncomeViewModel viewModel = new IncomeViewModel();
+            var viewModel = new IncomeViewModel();
             if (checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
@@ -58,7 +58,7 @@ namespace BudgetTrackerApp.Controllers
         // GET: Calculator
         public ActionResult Calculator()
         {
-            CalculatorsViewModel viewModel = new CalculatorsViewModel();
+            var viewModel = new CalculatorsViewModel();
             if (checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
@@ -78,7 +78,7 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid && checkBudgetId())
             {
-                Expense newExpense = new Expense();
+                var newExpense = new Expense();
                 newExpense.CategoryId = Convert.ToInt32(categoryId);
                 newExpense.BudgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 newExpense.Description = description;
@@ -96,7 +96,7 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid && checkBudgetId())
             {
-                Income income = new Income();
+                var income = new Income();
                 income.BudgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 income.Description = description;
                 income.Date = date;
@@ -114,7 +114,7 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid && checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
-                Expense editExpense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
+                var editExpense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
                 editExpense.CategoryId = Convert.ToInt32(categoryId);
                 editExpense.BudgetId = budgetId;
                 editExpense.Description = description;
@@ -132,7 +132,7 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid && checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
-                Income income = db.Incomes.SingleOrDefault(e => e.IncomeId == incomeId && e.BudgetId == budgetId);
+                var income = db.Incomes.SingleOrDefault(e => e.IncomeId == incomeId && e.BudgetId == budgetId);
                 income.BudgetId = budgetId;
                 income.Description = description;
                 income.Date = date;
@@ -149,7 +149,7 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid && checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
-                Expense expense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
+                var expense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId && e.BudgetId == budgetId);
                 db.Expenses.Remove(expense);
                 db.SaveChanges();
             }
@@ -163,7 +163,7 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid && checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
-                Income income = db.Incomes.SingleOrDefault(e => e.IncomeId == incomeId && e.BudgetId == budgetId);
+                var income = db.Incomes.SingleOrDefault(e => e.IncomeId == incomeId && e.BudgetId == budgetId);
                 db.Incomes.Remove(income);
                 db.SaveChanges();
             }
@@ -176,7 +176,7 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid && checkBudgetId())
             {
-                Category newCategory = new Category();
+                var newCategory = new Category();
                 newCategory.Name = categoryName;
                 newCategory.BudgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 db.Categories.Add(newCategory);
@@ -193,7 +193,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 var categoryIdConverted = Convert.ToInt32(categoryId);
-                Category editCategory = db.Categories.Single(c => c.BudgetId == budgetId && c.CategoryId == categoryIdConverted);
+                var editCategory = db.Categories.Single(c => c.BudgetId == budgetId && c.CategoryId == categoryIdConverted);
                 editCategory.Name = categoryName;
                 db.SaveChanges();
             }
@@ -208,7 +208,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 var categoryIdConverted = Convert.ToInt32(categoryId);
-                Category deleteCategory = db.Categories.FirstOrDefault(c => c.BudgetId == budgetId && c.CategoryId == categoryIdConverted);
+                var deleteCategory = db.Categories.FirstOrDefault(c => c.BudgetId == budgetId && c.CategoryId == categoryIdConverted);
                 if (deleteCategory != null)
                 {
                     db.Categories.Remove(deleteCategory);

@@ -10,4 +10,10 @@ namespace BudgetTrackerApp.Models
     {
         public IEnumerable<SelectListItem> Categories { get; set; }
     }
+
+    public class AdminDashboardViewModel
+    {
+        public int totalUsers { get; set; }
+        public int registrationsThisMonth { get; set; }
+    }
 }

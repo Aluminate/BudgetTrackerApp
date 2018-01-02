@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace BudgetTrackerApp.Controllers
 {
@@ -28,7 +29,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 return RedirectToAction("AdminDashboard");
             }
-            DashboardViewModel viewModel = new DashboardViewModel();
+            var viewModel = new DashboardViewModel();
             if (checkBudgetId())
             {
                 var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
@@ -46,8 +47,20 @@ namespace BudgetTrackerApp.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult AdminDashboard()
         {
+            var viewModel = new AdminDashboardViewModel();
+            var context = new ApplicationDbContext();
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
 
-            return View();
+            var adminId = User.Identity.GetUserId();
+            var allUsers = context.Users.Where(u => u.Id != adminId).ToList();
+
+            var adminAccount = (System.Security.Claims.ClaimsIdentity)User.Identity;
+
+            viewModel.totalUsers = allUsers.Count;
+            viewModel.registrationsThisMonth = allUsers.Where(au => au.CreatedDate.Year == currentYear && au.CreatedDate.Month == currentMonth).Count();
+
+            return View(viewModel);
         }
 
         // POST: CreateFeedback
