@@ -23,8 +23,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var account in Model.Accounts)
+            @if (Model.Accounts != null)
             {
+                foreach (var account in Model.Accounts)
+                {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => account.Username)</td>
                     <td>@Html.DisplayFor(modelItem => account.FirstName)</td>
@@ -32,6 +34,7 @@
                     <td>@account.LastOnlineDate.ToString("dd/MM/yyyy")</td>
                     <td>@account.CreatedDate.ToString("dd/MM/yyyy")</td>
                 </tr>
+                }
             }
         </tbody>
     </table>

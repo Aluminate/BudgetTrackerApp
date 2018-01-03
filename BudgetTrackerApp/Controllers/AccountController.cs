@@ -82,12 +82,9 @@ namespace BudgetTrackerApp.Controllers
             {
                 case SignInStatus.Success:
                     var userId = SignInManager.AuthenticationManager.AuthenticationResponseGrant.Identity.GetUserId();
-                    if (Request.Cookies["BudgetId"] == null)
-                    {
-                        HttpCookie cookie = new HttpCookie("BudgetId");
-                        cookie.Value = db.AccountBudgets.Single(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId.ToString();
-                        Response.Cookies.Add(cookie);
-                    }
+                    HttpCookie cookie = new HttpCookie("BudgetId");
+                    cookie.Value = db.AccountBudgets.Single(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId.ToString();
+                    Response.Cookies.Add(cookie);
                     var user = UserManager.FindById(userId);
                     user.LastOnlineDate = DateTime.Now;
                     UserManager.Update(user);
@@ -226,6 +223,9 @@ namespace BudgetTrackerApp.Controllers
                         newCategory4.Name = "Personal Care";
                         db.Categories.Add(newCategory4);
                         db.SaveChanges();
+                        HttpCookie cookie = new HttpCookie("BudgetId");
+                        cookie.Value = newBudget.BudgetId.ToString();
+                        Response.Cookies.Add(cookie);
                     }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     

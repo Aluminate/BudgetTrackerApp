@@ -68,8 +68,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var expense in Model.Expenses)
+                @if (Model.Expenses != null)
                 {
+                    foreach (var expense in Model.Expenses)
+                    {
                     <tr data-expense-id="@expense.ExpenseId" data-description="@expense.Description" data-category-id="@expense.CategoryId" data-date="@expense.Date.ToString("yyyy-MM-dd")" data-amount="@expense.Amount">
                         <td>@Html.DisplayFor(modelItem => expense.Description)</td>
                         <td>@Html.DisplayFor(modelItem => expense.Category.Name)</td>
@@ -82,6 +84,7 @@
                             <i class="fa fa-trash" title="Delete" data-toggle="modal" data-target="#deleteExpenseModal"></i>
                         </td>
                     </tr>
+                    }
                 }
             </tbody>
         </table>

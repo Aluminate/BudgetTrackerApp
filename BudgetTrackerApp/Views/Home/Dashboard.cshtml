@@ -58,7 +58,9 @@
                         <input type="date" name="date" required><br />
 
                         <label for="CategoryId">Category:</label>
-                        @if(Model.Categories != null){ Html.DropDownList("CategoryId", Model.Categories); }<br />
+                        @if(Model.Categories != null){
+                            @Html.DropDownList("CategoryId", Model.Categories);
+                        }<br />
     
 
 
