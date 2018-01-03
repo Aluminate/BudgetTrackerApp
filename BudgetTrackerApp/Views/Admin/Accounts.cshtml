@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Accounts";
+}
+@model BudgetTrackerApp.Models.AccountsViewModel
+
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
+
+<div class="jumbotron">
+    <h1 class="text-center">Accounts</h1>
+</div>
+
+<div class="row">
+    <table class="table" id="expenseTable">
+        <thead>
+            <tr>
+                <th>@Html.DisplayName("Username")</th>
+                <th>@Html.DisplayName("First Name")</th>
+                <th>@Html.DisplayName("Last Name")</th>
+                <th>@Html.DisplayName("Last Online")</th>
+                <th>@Html.DisplayName("Created Date")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in Model.Accounts)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => account.Username)</td>
+                    <td>@Html.DisplayFor(modelItem => account.FirstName)</td>
+                    <td>@Html.DisplayFor(modelItem => account.LastName)</td>
+                    <td>@account.LastOnlineDate.ToString("dd/MM/yyyy")</td>
+                    <td>@account.CreatedDate.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

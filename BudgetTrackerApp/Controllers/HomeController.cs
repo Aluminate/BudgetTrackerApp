@@ -23,14 +23,14 @@ namespace BudgetTrackerApp.Controllers
             var context = new ApplicationDbContext();
             var allUsers = context.Users.ToList();
             var testimonials = db.Feedbacks.Where(f => f.IsTestimonial == true && f.IsHidden == false).OrderByDescending(f => f.CreatedDate).ToList();
-            var testimonialList = new List<HomeIndexViewModel.testimonial>();
+            var testimonialList = new List<HomeIndexViewModel.Testimonial>();
             testimonials.ForEach(data =>
             {
                 var user = allUsers.Single(au => au.Id == data.UserId);
                 var nameOfUser = user.FirstName + " " + user.LastName;
-                testimonialList.Add(new HomeIndexViewModel.testimonial(data.Message, nameOfUser));
+                testimonialList.Add(new HomeIndexViewModel.Testimonial(data.Message, nameOfUser));
             });
-            viewModel.testimonials = testimonialList;
+            viewModel.Testimonials = testimonialList;
             return View(viewModel);
         }
 

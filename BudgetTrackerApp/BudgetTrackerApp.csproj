@@ -229,6 +229,7 @@
       <DependentUpon>BudgetEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BudgetController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -258,6 +259,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminViewModels.cs" />
     <Compile Include="Models\HomeViewModels.cs" />
     <Compile Include="Models\BudgetViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -359,6 +361,8 @@
     <Content Include="Views\Budget\Income.cshtml" />
     <Content Include="Views\Budget\Statistics.cshtml" />
     <Content Include="Views\Budget\Calculator.cshtml" />
+    <Content Include="Views\Admin\Accounts.cshtml" />
+    <Content Include="Views\Admin\SiteSettings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

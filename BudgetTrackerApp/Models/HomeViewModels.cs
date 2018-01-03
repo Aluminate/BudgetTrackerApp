@@ -19,18 +19,18 @@ namespace BudgetTrackerApp.Models
 
     public class HomeIndexViewModel
     {
-        public class testimonial
+        public class Testimonial
         {
-            public testimonial(string message, string name)
+            public Testimonial(string message, string name)
             {
-                this.message = message;
-                this.name = name;
+                this.Message = message;
+                this.Name = name;
             }
 
-            public string message;
-            public string name;
+            public string Message;
+            public string Name;
         }
 
-        public List<testimonial> testimonials { get; set; }
+        public List<Testimonial> Testimonials { get; set; }
     }
 }

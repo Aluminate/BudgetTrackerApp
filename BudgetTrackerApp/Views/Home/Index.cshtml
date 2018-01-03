@@ -23,12 +23,12 @@
     <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-body text-center">
-                @foreach (var testimonial in Model.testimonials)
+                @foreach (var testimonial in Model.Testimonials)
                 {
                     <div class="panel panel-default">
                         <div class="panel-body text-center">
-                            <strong>@testimonial.message</strong><br />
-                            <span class="pull-right">-@testimonial.name</span>
+                            <strong>@testimonial.Message</strong><br />
+                            <span class="pull-right">-@testimonial.Name</span>
                         </div>
                     </div>
                 }
