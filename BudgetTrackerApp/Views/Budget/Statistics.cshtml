@@ -2,19 +2,51 @@
     ViewBag.Title = "Statistics";
     var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
+@model BudgetTrackerApp.Models.StatisticsViewModel
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
 
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 
+
+<script>
+    var userBudget = 0;
+    var daysMultiplier = 30.42;
+    $(document).ready(function () {
+        $('select[name=dataToDisplay]').change(function () {
+            $("#expensesUserCategories").hide();
+            $("#expensesIncomeTime").hide();
+            $("#expensesTimeCategory").hide();
+            $("#netOverTime").hide();
+            switch ($('select[name=dataToDisplay]').val()) {
+                case 'expensesUserCategories':
+                    $('#expensesUserCategories').show();
+                    break;
+                case 'expensesIncomeTime':
+                    $('#expensesIncomeTime').show();
+                    break;
+                case 'expensesTimeCategory':
+                    $('#expensesTimeCategory').show();
+                    break;
+                case 'netOverTime':
+                    $('#netOverTime').show();
+                    break;
+                default:
+                    alert("An error has occurred.");
+            }
+        });
+    });
+</script>
 <div class="jumbotron">
     <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Statistics</h1>
 </div>
 
 <div class="row">
     <div id="chartArea" class="col-lg-6">
+        <div id="displayChart"></div>
     </div>
     <div id="menuArea" class="col-lg-6">
+        <input type="button" id="viewDataTable" class="btn btn-default pull-left" value="View Data Table"><br /><br />
         <div class="panel panel-default">
             <div class="panel-body">
                 <strong>Time Range:</strong><br />
@@ -25,14 +57,76 @@
                 <input type="date" name="timeRangeEnd" /><br />
 
                 <label for="dataToDisplay">Data:</label>
-                <select>
+                <select name="dataToDisplay">
                     <option value="expensesUserCategories">Expenses by User Categories</option>
                     <option value="expensesIncomeTime">Expenses and Income over Time</option>
-                    <option value="ExpensesTimeCategory">Expenses over Time by Category</option>
+                    <option value="expensesTimeCategory">Expenses over Time by Category</option>
                     <option value="netOverTime">Income minus Expenses (Net) over Time</option>
                 </select><br />
+                <div id="expensesUserCategories">
+                    <label for="displayType">Display Type:</label>
+                    <select name="displayType">
+                        <option value="barChart">Bar Chart</option>
+                        <option value="pieChart">Pie Chart</option>
+                        <option value="table">Table</option>
+                    </select><br />
+                    @if (Model.Categories != null)
+                    {
+                        <strong>Data to Display:</strong><br />
+                        foreach (var category in Model.Categories)
+                        {
+                            <input type="checkbox" name="selectedCategories" value="@category.Value" checked>
+                            <label for="selectedCategories">@category.Text</label><br />
+                        }
+                    }
+                    <input type="button" id="expensesUserCategoriesButton" class="btn btn-default pull-right" value="Submit">
+                </div>
 
-                
+                <div id="expensesIncomeTime" hidden>
+                    <label for="timeInterval">Time Interval:</label>
+                    <select name="timeInterval">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select><br />
+                    <input type="checkbox" name="dataToDisplayCheckboxes" value="Income" checked>
+                    <label for="dataToDisplayCheckboxes">Income</label><br />
+                    <input type="checkbox" name="dataToDisplayCheckboxes" value="Expenses" checked>
+                    <label for="dataToDisplayCheckboxes">Expenses</label><br />
+                    <input type="button" id="expensesIncomeTimeButton" class="btn btn-default pull-right" value="Submit">
+                </div>
+
+                <div id="expensesTimeCategory" hidden>
+                    <label for="timeInterval">Time Interval:</label>
+                    <select name="timeInterval">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select><br />
+                    @if (Model.Categories != null)
+                    {
+                        <strong>Data to Display:</strong><br />
+                        foreach (var category in Model.Categories)
+                        {
+                            <input type="checkbox" name="selectedCategories" value="@category.Value" checked>
+                            <label for="selectedCategories">@category.Text</label><br />
+                        }
+                    }
+                    <input type="button" id="expensesTimeCategoryButton" class="btn btn-default pull-right" value="Submit">
+                </div>
+
+                <div id="netOverTime" hidden>
+                    <select name="timeInterval">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select><br />
+                    <input type="button" id="netOverTimeButton" class="btn btn-default pull-right" value="Submit">
+                </div>
+
             </div>
         </div>
     </div>

@@ -52,7 +52,18 @@ namespace BudgetTrackerApp.Controllers
         // GET: Statistics
         public ActionResult Statistics()
         {
-            return View();
+            var viewModel = new StatisticsViewModel();
+            if (checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                viewModel.Categories = db.Categories.Where(c => c.BudgetId == budgetId)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    }).ToList();
+            }
+            return View(viewModel);
         }
 
         // GET: Calculator

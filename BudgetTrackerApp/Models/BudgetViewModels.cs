@@ -22,4 +22,9 @@ namespace BudgetTrackerApp.Models
     {
         public IEnumerable<SelectListItem> Categories { get; set; }
     }
+
+    public class StatisticsViewModel
+    {
+        public IEnumerable<SelectListItem> Categories { get; set; }
+    }
 }
