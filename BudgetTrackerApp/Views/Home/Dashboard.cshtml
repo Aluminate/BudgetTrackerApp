@@ -7,7 +7,6 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
-    // Load the Visualization API library and the piechart library.
     google.load("visualization", "1", { packages: ["corechart"] });
     google.setOnLoadCallback(drawChart);
     function drawChart() {
@@ -30,13 +29,11 @@
             failure: function (response) {
                 alert(response.d);
             },
-            error: function (r) {
+            error: function (response) {
                 alert(response.d);
             }
         })
     };
-
-
 </script>
 
 <div class="jumbotron">

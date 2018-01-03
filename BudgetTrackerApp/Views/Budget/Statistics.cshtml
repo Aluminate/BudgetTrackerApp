@@ -4,36 +4,110 @@
 }
 @model BudgetTrackerApp.Models.StatisticsViewModel
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
-
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
-
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 <script>
-    var userBudget = 0;
-    var daysMultiplier = 30.42;
-    $(document).ready(function () {
-        $('select[name=dataToDisplay]').change(function () {
-            $("#expensesUserCategories").hide();
-            $("#expensesIncomeTime").hide();
-            $("#expensesTimeCategory").hide();
-            $("#netOverTime").hide();
-            switch ($('select[name=dataToDisplay]').val()) {
-                case 'expensesUserCategories':
-                    $('#expensesUserCategories').show();
-                    break;
-                case 'expensesIncomeTime':
-                    $('#expensesIncomeTime').show();
-                    break;
-                case 'expensesTimeCategory':
-                    $('#expensesTimeCategory').show();
-                    break;
-                case 'netOverTime':
-                    $('#netOverTime').show();
-                    break;
-                default:
-                    alert("An error has occurred.");
+    google.load("visualization", "1", { packages: ["corechart", "table"] });
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        $.ajax({
+            type: "POST",
+            url: "getExpensesUserCategories",
+            data: "{}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var data = google.visualization.arrayToDataTable(response);
+
+                //Pie
+                var options = {
+                    title: 'Expenses by User Categories'
+                };
+                var chart = new google.visualization.BarChart($("#displayChart")[0]);
+                chart.draw(data, options);
+            },
+            failure: function (response) {
+                alert(response.d);
+            },
+            error: function (response) {
+                alert(response.d);
             }
+        })
+    };
+    $(document).ready(function () {
+        var userBudget = 0;
+        var daysMultiplier = 30.42;
+        $(document).ready(function () {
+            $('select[name=dataToDisplay]').change(function () {
+                $("#expensesUserCategories").hide();
+                $("#expensesIncomeTime").hide();
+                $("#expensesTimeCategory").hide();
+                $("#netOverTime").hide();
+                switch ($('select[name=dataToDisplay]').val()) {
+                    case 'expensesUserCategories':
+                        $('#expensesUserCategories').show();
+                        break;
+                    case 'expensesIncomeTime':
+                        $('#expensesIncomeTime').show();
+                        break;
+                    case 'expensesTimeCategory':
+                        $('#expensesTimeCategory').show();
+                        break;
+                    case 'netOverTime':
+                        $('#netOverTime').show();
+                        break;
+                    default:
+                        alert("An error has occurred.");
+                }
+            });
+        });
+
+        $("#expensesUserCategoriesButton").click(function () {
+            var categories = [];
+            $("input[name='selectedCategories[]']:checked").each(function () {
+                categories.push(parseInt($(this).val()));
+            });
+            alert(categories);
+            $.ajax({
+                type: "POST",
+                url: "getExpensesUserCategories",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    categories: categories
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
+
+
+                    var options = {
+                        title: 'Expenses by User Categories'
+                    };
+                    switch ($('select[name=displayType]').val()) {
+                        case 'barChart':
+                            var chart = new google.visualization.BarChart($("#displayChart")[0]);
+                            break;
+                        case 'pieChart':
+                            var chart = new google.visualization.PieChart($("#displayChart")[0]);
+                            break;
+                        case 'table':
+                            var chart = new google.visualization.Table($("#displayChart")[0]);
+                            break;
+                        default:
+                            alert("An error has occurred.");
+                    }
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
         });
     });
 </script>
@@ -75,8 +149,8 @@
                         <strong>Data to Display:</strong><br />
                         foreach (var category in Model.Categories)
                         {
-                            <input type="checkbox" name="selectedCategories" value="@category.Value" checked>
-                            <label for="selectedCategories">@category.Text</label><br />
+                            <input type="checkbox" name="selectedCategories[]" value="@category.Value" checked>
+                            <label for="selectedCategories[]">@category.Text</label><br />
                         }
                     }
                     <input type="button" id="expensesUserCategoriesButton" class="btn btn-default pull-right" value="Submit">

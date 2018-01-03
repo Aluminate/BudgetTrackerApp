@@ -66,6 +66,43 @@ namespace BudgetTrackerApp.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public JsonResult getExpensesUserCategories(DateTime? dateRangeStart, DateTime? dateRangeEnd, int[] categories)
+        {
+
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var chartData = new List<object>();
+            if (checkBudgetId())
+            {
+                chartData.Add(new object[]
+                {
+                    "Category", "Amount ($)"
+                });
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId);
+
+                if (dateRangeStart != null)
+                {
+                    expenses = db.Expenses.Where(e => e.Date > dateRangeStart);
+                }
+                if (dateRangeEnd != null)
+                {
+                    expenses = db.Expenses.Where(e => e.Date < dateRangeEnd);
+                }
+                if (categories != null)
+                {
+                    expenses = expenses.Where(e => categories.Contains(e.CategoryId));
+                }
+                var allCategories = expenses.Select(e => e.Category.Name).Distinct();
+                allCategories.ToList().ForEach(data =>
+                    chartData.Add(new object[]
+                        {
+                        data, expenses.Where(e => e.Category.Name == data).Sum(e => e.Amount)
+                        })
+                );
+            }
+            return Json(chartData);
+        }
+
         // GET: Calculator
         public ActionResult Calculator()
         {
