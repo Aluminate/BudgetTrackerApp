@@ -15,6 +15,18 @@
             modal.find('#removeModalUsername').text($("#SharedBudgets option:selected").text());
             modal.find('input[name="username"]').val($("#SharedBudgets option:selected").text());
         });
+
+        $('#acceptSharedBudgetModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('input[name="budgetId"]').val($("#PendingBudgets").val());
+            modal.find('.modalUsername').text($("#PendingBudgets option:selected").text());
+        });
+
+        $('#declineSharedBudgetModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('input[name="budgetId"]').val($("#PendingBudgets").val());
+            modal.find('.modalUsername').text($("#PendingBudgets option:selected").text());
+        });
     });
 </script>
 
@@ -36,7 +48,6 @@
             <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
         <div id="budgets" class="tab-pane fade">
-            <h3>budget</h3>
             <div class="col-sm-4">
                 <h3>User Budgets</h3>
                 @if (Model.MyBudgetsList != null)
@@ -55,8 +66,8 @@
                 @if (Model.PendingBudgetsList != null && Model.PendingBudgetsList.Count() > 0)
                 {
                     @Html.DropDownList("PendingBudgets", Model.PendingBudgetsList, new { @size = 15, @style = "width:270px;" }); <br />
-                    <input type="button" id="AcceptPendingButton" value="Accept" class="btn btn-primary pull-left">
-                    <input type="button" id="DeclinePendingButton" value="Decline" class="btn btn-primary">
+                    <input type="button" id="AcceptPendingButton" value="Accept" class="btn btn-primary pull-left" data-toggle="modal" data-target="#acceptSharedBudgetModal">
+                    <input type="button" id="DeclinePendingButton" value="Decline" class="btn btn-primary" data-toggle="modal" data-target="#declineSharedBudgetModal">
                 }
                 else
                 {
@@ -114,6 +125,48 @@
                 <form action="DeleteSharedBudget" method="post">
                     <input type="hidden" name="budgetId">
                     <input type="hidden" name="username">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accept Shared Budget Modal -->
+<div id="acceptSharedBudgetModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Accept Shared Budget</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to accept shared budget from the following user: <span class="modalUsername"></span></p>
+                <form action="AcceptSharedBudget" method="post">
+                    <input type="hidden" name="budgetId">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Decline Shared Budget Modal -->
+<div id="declineSharedBudgetModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Decline Shared Budget</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to decline shared budget from the following user: <span class="modalUsername"></span></p>
+                <form action="DeclineSharedBudget" method="post">
+                    <input type="hidden" name="budgetId">
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>

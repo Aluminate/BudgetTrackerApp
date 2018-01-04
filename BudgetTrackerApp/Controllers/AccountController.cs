@@ -564,6 +564,34 @@ namespace BudgetTrackerApp.Controllers
             return RedirectToAction("Settings");
         }
 
+        // POST: AcceptSharedBudget
+        [HttpPost]
+        public ActionResult AcceptSharedBudget(int budgetId)
+        {
+            if (ModelState.IsValid && checkBudgetId())
+            {
+                var userId = User.Identity.GetUserId();
+                var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
+                accountBudget.IsAccepted = true;
+                db.SaveChanges();
+            }
+            return RedirectToAction("Settings");
+        }
+
+        // POST: DeclineSharedBudget
+        [HttpPost]
+        public ActionResult DeclineSharedBudget(int budgetId)
+        {
+            if (ModelState.IsValid && checkBudgetId())
+            {
+                var userId = User.Identity.GetUserId();
+                var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
+                db.AccountBudgets.Remove(accountBudget);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Settings");
+        }
+
         // Checks if user should have access to this budgetId
         private bool checkBudgetId()
         {
