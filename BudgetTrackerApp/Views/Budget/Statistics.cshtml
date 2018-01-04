@@ -142,7 +142,38 @@
         });
 
         $("#expensesTimeCategoryButton").click(function () {
+            var categories = [];
+            $("input[name='selectedCategories2[]']:checked").each(function () {
+                categories.push(parseInt($(this).val()));
+            });
+            $.ajax({
+                type: "POST",
+                url: "GetExpensesTimeCategory",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    timeInterval: $("select[name=timeIntervalExpensesIncomeTime]").val(),
+                    categories: categories
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
 
+
+                    var options = {
+                        title: 'Income and Expenses over Time'
+                    };
+                    var chart = new google.visualization.LineChart($("#displayChart")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
         });
 
         $("#netOverTimeButton").click(function () {
@@ -249,8 +280,8 @@
                         <strong>Data to Display:</strong><br />
                         foreach (var category in Model.Categories)
                         {
-                            <input type="checkbox" name="selectedCategories" value="@category.Value" checked>
-                            <label for="selectedCategories">@category.Text</label><br />
+                            <input type="checkbox" name="selectedCategories2[]" value="@category.Value" checked>
+                            <label for="selectedCategories2[]">@category.Text</label><br />
                         }
                     }
                     <input type="button" id="expensesTimeCategoryButton" class="btn btn-default pull-right" value="Submit">

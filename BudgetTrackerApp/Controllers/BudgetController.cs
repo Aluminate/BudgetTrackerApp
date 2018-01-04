@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -378,10 +379,84 @@ namespace BudgetTrackerApp.Controllers
                             totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                                date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
                             });
                     });
                 }
+            }
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        public JsonResult GetExpensesTimeCategory(DateTime? dateRangeStart, DateTime? dateRangeEnd, string timeInterval, int[] categories)
+        {
+
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var chartData = new List<object>();
+            if (checkBudgetId())
+            {
+
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId);
+
+                var income = db.Incomes.Where(i => i.BudgetId == budgetId);
+
+                var groupedExpenses = expenses
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    });
+
+                var groupedIncome = income
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    });
+
+                if (dateRangeStart == null)
+                {
+                    var earliestExpenseDate = expenses.Min(e => e.Date);
+                    var earliestIncomeDate = income.Min(e => e.Date);
+                    dateRangeStart = (earliestExpenseDate < earliestIncomeDate ? earliestExpenseDate : earliestIncomeDate);
+                }
+
+                if (dateRangeEnd == null)
+                {
+                    var latestExpenseDate = expenses.Max(e => e.Date);
+                    var latestIncomeDate = income.Max(e => e.Date);
+                    dateRangeEnd = (latestExpenseDate > latestIncomeDate ? latestExpenseDate : latestIncomeDate);
+                }
+
+                if (categories != null)
+                {
+                    expenses = expenses.Where(e => categories.Contains(e.CategoryId));
+                }
+                var allCategories = expenses.Select(e => e.Category.Name).Distinct();
+                chartData.Add(new string[] {
+                    "Date"
+                });
+
+                if (timeInterval == "daily")
+                {
+                    var selectedDates = new List<DateTime>();
+
+                    for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddDays(1))
+                    {
+                        selectedDates.Add(date);
+                    }
+
+                    selectedDates.ForEach(date =>
+                    {
+                        chartData.Add(new ExpandoObject());
+
+                    });
+                }
+                chartData.ForEach(data => {
+                    data = data + "test";
+                });
             }
             return Json(chartData);
         }
@@ -556,7 +631,7 @@ namespace BudgetTrackerApp.Controllers
             var userId = User.Identity.GetUserId();
             var accountBudget = db.AccountBudgets.FirstOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
             return accountBudget != null;
-        } 
+        }
 
         protected override void Dispose(bool disposing)
         {
