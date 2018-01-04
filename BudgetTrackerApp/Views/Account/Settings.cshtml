@@ -7,6 +7,17 @@
     <h1 class="text-center">My Budget Tracker</h1>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $('#removeSharedBudgetModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('input[name="budgetId"]').val($("#SharedBudgets").val());
+            modal.find('#removeModalUsername').text($("#SharedBudgets option:selected").text());
+            modal.find('input[name="username"]').val($("#SharedBudgets option:selected").text());
+        });
+    });
+</script>
+
 <div class="row">
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#budgetGoals">Budget Goals</a></li>
@@ -57,13 +68,55 @@
                 @if (Model.SharedBudgetUserList != null)
                 {
                     @Html.DropDownList("SharedBudgets", Model.SharedBudgetUserList, new { @size = 15, @style = "width:270px;" }); <br />
-                    <input type="button" id="AddSharedUserButton" value="Share" class="btn btn-primary pull-left">
-                    <input type="button" id="RemoveSharedUserButton" value="Remove" class="btn btn-primary">
+                    <input type="button" id="AddSharedUserButton" value="Share" class="btn btn-primary pull-left" data-toggle="modal" data-target="#addSharedBudgetModal">
+                    <input type="button" id="RemoveSharedUserButton" value="Remove" class="btn btn-primary" data-toggle="modal" data-target="#removeSharedBudgetModal">
                 }
                 else
                 {
                     <span>~None~</span>
                 }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Shared Budget Modal -->
+<div id="addSharedBudgetModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Enter the username of the person you wish to share your budget with.</h4>
+            </div>
+            <div class="modal-body">
+                <form action="CreateSharedBudget" method="post">
+                    <input type="text" name="username" id="username"><br /><br />
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Shared Budget Modal -->
+<div id="removeSharedBudgetModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Remove</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove the following user from your shared budget: <span id="removeModalUsername"></span></p>
+                <form action="DeleteSharedBudget" method="post">
+                    <input type="hidden" name="budgetId">
+                    <input type="hidden" name="username">
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
             </div>
         </div>
     </div>

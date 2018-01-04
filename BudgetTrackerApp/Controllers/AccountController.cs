@@ -486,8 +486,8 @@ namespace BudgetTrackerApp.Controllers
             var viewModel = new SettingsViewModel();
             if (checkBudgetId())
             {
-                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
                 var userId = User.Identity.GetUserId();
+                var budgetId = db.AccountBudgets.SingleOrDefault(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId;
                 var budgetList = new List<SelectListItem>();
                 db.AccountBudgets.Where(ab => ab.UserId == userId && (ab.IsOwner || ab.IsAccepted)).ToList().ForEach(data => {
                     budgetList.Add(new SelectListItem
@@ -514,12 +514,54 @@ namespace BudgetTrackerApp.Controllers
                     sharedList.Add(new SelectListItem
                     {
                         Value = data.BudgetId.ToString(),
-                        Text = UserManager.FindById(db.AccountBudgets.Single(x => x.BudgetId == data.BudgetId && x.IsOwner == true).UserId).UserName
+                        Text = UserManager.FindById(data.UserId).UserName
                     });
                 });
                 viewModel.SharedBudgetUserList = sharedList;
             }
             return View(viewModel);
+        }
+
+        // POST: CreateSharedBudget
+        [HttpPost]
+        public ActionResult CreateSharedBudget(string username)
+        {
+            if (ModelState.IsValid && checkBudgetId())
+            {
+                var newSharedBudget = new AccountBudget();
+                var sharedUserId = UserManager.FindByName(username)?.Id;
+                if (sharedUserId != null) {
+                    var userId = User.Identity.GetUserId();
+                    var budgetId = db.AccountBudgets.SingleOrDefault(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId;
+                    newSharedBudget.UserId = sharedUserId;
+                    newSharedBudget.BudgetId = budgetId;
+                    newSharedBudget.CreatedDate = DateTime.Now;
+                    newSharedBudget.IsOwner = false;
+                    newSharedBudget.IsAccepted = false;
+                    db.AccountBudgets.Add(newSharedBudget);
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Settings");
+        }
+
+        // POST: DeleteSharedBudget
+        [HttpPost]
+        public ActionResult DeleteSharedBudget(int budgetId, string username)
+        {
+            if (ModelState.IsValid && checkBudgetId())
+            {
+                var sharedUserId = UserManager.FindByName(username)?.Id;
+                var userId = User.Identity.GetUserId();
+                var userBudgetId = db.AccountBudgets.SingleOrDefault(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId;
+                if (sharedUserId != null && userBudgetId == budgetId)
+                {
+                    var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == userBudgetId && ab.UserId == sharedUserId);
+                    db.AccountBudgets.Remove(accountBudget);
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Settings");
         }
 
         // Checks if user should have access to this budgetId
