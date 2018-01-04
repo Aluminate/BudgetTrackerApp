@@ -123,9 +123,9 @@ namespace BudgetTrackerApp.Controllers
                 {
                     "Category", "Amount ($)"
                 });
-                var dateNow = DateTime.Now;
-                var beginningOfMonth = dateNow.AddMonths(1 - dateNow.Day);
-                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId && e.Date > beginningOfMonth);
+                var currentYear = DateTime.Now.Year;
+                var currentMonth = DateTime.Now.Month;
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId && e.Date.Year == currentYear && e.Date.Month == currentMonth);
                 var allCategories = expenses.Select(e => e.Category.Name).Distinct();
                 allCategories.ToList().ForEach(data =>
                     chartData.Add(new object[]

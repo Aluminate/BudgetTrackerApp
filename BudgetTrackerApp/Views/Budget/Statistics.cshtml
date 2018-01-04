@@ -68,7 +68,6 @@
             $("input[name='selectedCategories[]']:checked").each(function () {
                 categories.push(parseInt($(this).val()));
             });
-            alert(categories);
             $.ajax({
                 type: "POST",
                 url: "getExpensesUserCategories",
@@ -99,6 +98,44 @@
                         default:
                             alert("An error has occurred.");
                     }
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
+        });
+
+        $("#expensesIncomeTimeButton").click(function () {
+
+        });
+
+        $("#expensesTimeCategoryButton").click(function () {
+
+        });
+
+        $("#netOverTimeButton").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "getNetOverTime",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    timeInterval: $("select[name=timeIntervalNetOverTime]").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
+
+
+                    var options = {
+                        title: 'Income minus Expenses (Net) over Time'
+                    };
+                    var chart = new google.visualization.LineChart($("#displayChart")[0]);
                     chart.draw(data, options);
                 },
                 failure: function (response) {
@@ -192,7 +229,8 @@
                 </div>
 
                 <div id="netOverTime" hidden>
-                    <select name="timeInterval">
+                    <label for="timeIntervalNetOverTime">Time Interval:</label>
+                    <select name="timeIntervalNetOverTime">
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
                         <option value="monthly">Monthly</option>
