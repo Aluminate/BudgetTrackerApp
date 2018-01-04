@@ -1,6 +1,5 @@
 ﻿@{
     ViewBag.Title = "Expenses";
-    var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
 @model BudgetTrackerApp.Models.ExpensesViewModel
 
@@ -52,7 +51,7 @@
 
 </script>
 <div class="jumbotron">
-    <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Expenses</h1>
+    <h1 class="text-center">@(Request.Cookies["BudgetUsername"]?.Value)'s Expenses</h1>
 </div>
 
 <div class="row">

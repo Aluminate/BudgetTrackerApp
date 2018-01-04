@@ -90,6 +90,9 @@ namespace BudgetTrackerApp.Controllers
                     var user = UserManager.FindById(userId);
                     user.LastOnlineDate = DateTime.Now;
                     UserManager.Update(user);
+                    HttpCookie cookie2 = new HttpCookie("BudgetUsername");
+                    cookie2.Value = user.UserName;
+                    Response.Cookies.Add(cookie2);
                     return RedirectToAction("Dashboard", "Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -230,6 +233,9 @@ namespace BudgetTrackerApp.Controllers
                         HttpCookie cookie = new HttpCookie("BudgetId");
                         cookie.Value = newBudget.BudgetId.ToString();
                         Response.Cookies.Add(cookie);
+                        HttpCookie cookie2 = new HttpCookie("BudgetUsername");
+                        cookie2.Value = user.UserName;
+                        Response.Cookies.Add(cookie2);
                     }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
@@ -606,7 +612,7 @@ namespace BudgetTrackerApp.Controllers
                 HttpCookie cookie2 = new HttpCookie("BudgetUsername");
                 var budgetOwner = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.IsOwner == true).UserId;
                 cookie2.Value = UserManager.FindById(budgetOwner).UserName;
-                Response.Cookies.Add(cookie);
+                Response.Cookies.Add(cookie2);
             }
             return RedirectToAction("Settings");
         }

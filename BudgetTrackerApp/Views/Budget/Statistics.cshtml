@@ -1,6 +1,5 @@
 ﻿@{
     ViewBag.Title = "Statistics";
-    var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
 }
 @model BudgetTrackerApp.Models.StatisticsViewModel
 
@@ -241,7 +240,7 @@
     });
 </script>
 <div class="jumbotron">
-    <h1 class="text-center">@(user.FindFirst("FirstName").Value)'s Statistics</h1>
+    <h1 class="text-center">@(Request.Cookies["BudgetUsername"]?.Value)'s Statistics</h1>
 </div>
 
 <div class="row">
