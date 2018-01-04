@@ -524,6 +524,8 @@ namespace BudgetTrackerApp.Controllers
                     });
                 });
                 viewModel.SharedBudgetUserList = sharedList;
+
+                viewModel.myBudgetGoal = db.BudgetGoals.SingleOrDefault(bg => bg.BudgetId == budgetId);
             }
             return View(viewModel);
         }
@@ -536,7 +538,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 var newSharedBudget = new AccountBudget();
                 var sharedUserId = UserManager.FindByName(username)?.Id;
-                if (sharedUserId != null) {
+                if (sharedUserId != null && sharedUserId != User.Identity.GetUserId()) {
                     var userId = User.Identity.GetUserId();
                     var budgetId = db.AccountBudgets.SingleOrDefault(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId;
                     newSharedBudget.UserId = sharedUserId;
@@ -627,6 +629,38 @@ namespace BudgetTrackerApp.Controllers
                 var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId && ab.IsOwner == false);
                 db.AccountBudgets.Remove(accountBudget);
                 db.SaveChanges();
+            }
+            return RedirectToAction("Settings");
+        }
+
+        // POST: DeleteMySharedBudgetModal
+        [HttpPost]
+        public ActionResult UpdateBudgetGoal(string budgetGoalsEnabled, decimal budgetAmount)
+        {
+            if (ModelState.IsValid)
+            {
+                var boolBudgetGoalsEnabled = budgetGoalsEnabled == null ? false : true;
+                var userId = User.Identity.GetUserId();
+                var accountBudgetId = db.AccountBudgets.SingleOrDefault(ab => ab.UserId == userId && ab.IsOwner == true).BudgetId;
+                var userBudget = db.BudgetGoals.Where(bg => bg.BudgetId == accountBudgetId);
+                if (userBudget.Count() == 0)
+                {
+                    var newBudgetGoal = new BudgetGoal();
+                    newBudgetGoal.BudgetId = accountBudgetId;
+                    newBudgetGoal.BudgetAmount = budgetAmount;
+                    newBudgetGoal.StartDate = DateTime.Now;
+                    newBudgetGoal.TimePeriod = "monthly";
+                    newBudgetGoal.IsProgressBarEnabled = boolBudgetGoalsEnabled;
+                    db.BudgetGoals.Add(newBudgetGoal);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    var editBudgetGoal = userBudget.First();
+                    editBudgetGoal.BudgetAmount = budgetAmount;
+                    editBudgetGoal.IsProgressBarEnabled = boolBudgetGoalsEnabled;
+                    db.SaveChanges();
+                }
             }
             return RedirectToAction("Settings");
         }

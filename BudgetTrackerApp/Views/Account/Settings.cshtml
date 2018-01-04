@@ -4,7 +4,7 @@
 @model BudgetTrackerApp.Models.SettingsViewModel
 
 <div class="jumbotron">
-    <h1 class="text-center">My Budget Tracker</h1>
+    <h1 class="text-center">Settings</h1>
 </div>
 
 <script>
@@ -51,8 +51,12 @@
 
     <div class="tab-content">
         <div id="budgetGoals" class="tab-pane fade in active">
-            <form>
-
+            <form action="UpdateBudgetGoal" method="post">
+                <label for="budgetGoalsEnabled">Progress Bar Enabled:</label>
+                <input type="checkbox" name="budgetGoalsEnabled" @(Model.myBudgetGoal != null ? (Model.myBudgetGoal.IsProgressBarEnabled ? "checked" : "") : "")><br /><br />
+                <label for="budgetAmount">Budget Amount ($):</label>
+                <input type="number" name="budgetAmount" value="@(Model.myBudgetGoal != null ? Model.myBudgetGoal.BudgetAmount : Decimal.Zero)" required><br /><br />
+                <input type="submit" class="btn btn-default" />
             </form>
         </div>
         <div id="settings" class="tab-pane fade">
@@ -114,7 +118,7 @@
             </div>
             <div class="modal-body">
                 <form action="CreateSharedBudget" method="post">
-                    <input type="text" name="username" id="username"><br /><br />
+                    <input type="text" name="username" id="username" required><br /><br />
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -135,8 +139,8 @@
             <div class="modal-body">
                 <p>Are you sure you want to remove the following user from your shared budget: <span id="removeModalUsername"></span></p>
                 <form action="DeleteSharedBudget" method="post">
-                    <input type="hidden" name="budgetId">
-                    <input type="hidden" name="username">
+                    <input type="hidden" name="budgetId" required>
+                    <input type="hidden" name="username" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -157,7 +161,7 @@
             <div class="modal-body">
                 <p>Are you sure you want to accept shared budget from the following user: <span class="modalUsername"></span></p>
                 <form action="AcceptSharedBudget" method="post">
-                    <input type="hidden" name="budgetId">
+                    <input type="hidden" name="budgetId" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -178,7 +182,7 @@
             <div class="modal-body">
                 <p>Are you sure you want to decline shared budget from the following user: <span class="modalUsername"></span></p>
                 <form action="DeclineSharedBudget" method="post">
-                    <input type="hidden" name="budgetId">
+                    <input type="hidden" name="budgetId" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -199,7 +203,7 @@
             <div class="modal-body">
                 <p>Are you sure you want to change to <span class="modalUsername"></span>'s shared budget?</p>
                 <form action="ChangeSharedBudget" method="post">
-                    <input type="hidden" name="budgetId">
+                    <input type="hidden" name="budgetId" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -220,7 +224,7 @@
             <div class="modal-body">
                 <p>Are you sure you want to remove your access to <span class="modalUsername"></span>'s shared budget?</p>
                 <form action="DeleteMySharedBudgetModal" method="post">
-                    <input type="hidden" name="budgetId">
+                    <input type="hidden" name="budgetId" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>

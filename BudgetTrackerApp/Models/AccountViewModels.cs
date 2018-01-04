@@ -141,5 +141,6 @@ namespace BudgetTrackerApp.Models
         public IEnumerable<SelectListItem> MyBudgetsList { get; set; }
         public IEnumerable<SelectListItem> PendingBudgetsList { get; set; }
         public IEnumerable<SelectListItem> SharedBudgetUserList { get; set; }
+        public BudgetGoal myBudgetGoal { get; set; }
     }
 }
