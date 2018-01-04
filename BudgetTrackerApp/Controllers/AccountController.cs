@@ -585,7 +585,40 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid && checkBudgetId())
             {
                 var userId = User.Identity.GetUserId();
+                var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId && ab.IsOwner == false);
+                db.AccountBudgets.Remove(accountBudget);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Settings");
+        }
+
+        // POST: ChangeSharedBudget
+        [HttpPost]
+        public ActionResult ChangeSharedBudget(int budgetId)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Identity.GetUserId();
                 var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
+                HttpCookie cookie = new HttpCookie("BudgetId");
+                cookie.Value = accountBudget.BudgetId.ToString();
+                Response.Cookies.Add(cookie);
+                HttpCookie cookie2 = new HttpCookie("BudgetUsername");
+                var budgetOwner = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.IsOwner == true).UserId;
+                cookie2.Value = UserManager.FindById(budgetOwner).UserName;
+                Response.Cookies.Add(cookie);
+            }
+            return RedirectToAction("Settings");
+        }
+
+        // POST: DeleteMySharedBudgetModal
+        [HttpPost]
+        public ActionResult DeleteMySharedBudgetModal(int budgetId)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Identity.GetUserId();
+                var accountBudget = db.AccountBudgets.SingleOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId && ab.IsOwner == false);
                 db.AccountBudgets.Remove(accountBudget);
                 db.SaveChanges();
             }
