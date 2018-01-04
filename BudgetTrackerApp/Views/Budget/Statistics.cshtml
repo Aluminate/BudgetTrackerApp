@@ -110,7 +110,35 @@
         });
 
         $("#expensesIncomeTimeButton").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "GetExpensesIncomeOverTime",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    timeInterval: $("select[name=timeIntervalExpensesIncomeTime]").val(),
+                    showIncome: $("input[name=dataToDisplayCheckboxes][value=Income]").prop("checked"),
+                    showExpenses: $("input[name=dataToDisplayCheckboxes][value=Expenses]").prop("checked")
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
 
+
+                    var options = {
+                        title: 'Income and Expenses over Time'
+                    };
+                    var chart = new google.visualization.LineChart($("#displayChart")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
         });
 
         $("#expensesTimeCategoryButton").click(function () {
@@ -194,8 +222,8 @@
                 </div>
 
                 <div id="expensesIncomeTime" hidden>
-                    <label for="timeInterval">Time Interval:</label>
-                    <select name="timeInterval">
+                    <label for="timeIntervalExpensesIncomeTime">Time Interval:</label>
+                    <select name="timeIntervalExpensesIncomeTime">
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
                         <option value="monthly">Monthly</option>
