@@ -42,7 +42,6 @@
             $('select[name=dataToDisplay]').change(function () {
                 $("#expensesUserCategories").hide();
                 $("#expensesIncomeTime").hide();
-                $("#expensesTimeCategory").hide();
                 $("#netOverTime").hide();
                 switch ($('select[name=dataToDisplay]').val()) {
                     case 'expensesUserCategories':
@@ -50,9 +49,6 @@
                         break;
                     case 'expensesIncomeTime':
                         $('#expensesIncomeTime').show();
-                        break;
-                    case 'expensesTimeCategory':
-                        $('#expensesTimeCategory').show();
                         break;
                     case 'netOverTime':
                         $('#netOverTime').show();
@@ -141,41 +137,6 @@
             })
         });
 
-        $("#expensesTimeCategoryButton").click(function () {
-            var categories = [];
-            $("input[name='selectedCategories2[]']:checked").each(function () {
-                categories.push(parseInt($(this).val()));
-            });
-            $.ajax({
-                type: "POST",
-                url: "GetExpensesTimeCategory",
-                data: JSON.stringify({
-                    dateRangeStart: $("input[name=timeRangeStart]").val(),
-                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
-                    timeInterval: $("select[name=timeIntervalExpensesIncomeTime]").val(),
-                    categories: categories
-                }),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    var data = google.visualization.arrayToDataTable(response);
-
-
-                    var options = {
-                        title: 'Income and Expenses over Time'
-                    };
-                    var chart = new google.visualization.LineChart($("#displayChart")[0]);
-                    chart.draw(data, options);
-                },
-                failure: function (response) {
-                    alert(response.d);
-                },
-                error: function (response) {
-                    alert(response.d);
-                }
-            })
-        });
-
         $("#netOverTimeButton").click(function () {
             $.ajax({
                 type: "POST",
@@ -230,7 +191,6 @@
                 <select name="dataToDisplay">
                     <option value="expensesUserCategories">Expenses by User Categories</option>
                     <option value="expensesIncomeTime">Expenses and Income over Time</option>
-                    <option value="expensesTimeCategory">Expenses over Time by Category</option>
                     <option value="netOverTime">Income minus Expenses (Net) over Time</option>
                 </select><br />
                 <div id="expensesUserCategories">
@@ -265,26 +225,6 @@
                     <input type="checkbox" name="dataToDisplayCheckboxes" value="Expenses" checked>
                     <label for="dataToDisplayCheckboxes">Expenses</label><br />
                     <input type="button" id="expensesIncomeTimeButton" class="btn btn-default pull-right" value="Submit">
-                </div>
-
-                <div id="expensesTimeCategory" hidden>
-                    <label for="timeInterval">Time Interval:</label>
-                    <select name="timeInterval">
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="yearly">Yearly</option>
-                    </select><br />
-                    @if (Model.Categories != null)
-                    {
-                        <strong>Data to Display:</strong><br />
-                        foreach (var category in Model.Categories)
-                        {
-                            <input type="checkbox" name="selectedCategories2[]" value="@category.Value" checked>
-                            <label for="selectedCategories2[]">@category.Text</label><br />
-                        }
-                    }
-                    <input type="button" id="expensesTimeCategoryButton" class="btn btn-default pull-right" value="Submit">
                 </div>
 
                 <div id="netOverTime" hidden>
