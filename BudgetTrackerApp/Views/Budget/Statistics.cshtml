@@ -166,6 +166,78 @@
                 }
             })
         });
+
+        $("#viewDataTable").click(function () {
+            $("#chartDiv").hide();
+            $("#datatableDiv").show();
+
+            $.ajax({
+                type: "POST",
+                url: "getDatatable",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    timeInterval: $("select[name=timeIntervalDatatable]").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
+
+
+                    var options = {
+                        title: 'Datatable',
+                        width: 1000,
+                        chartArea: { left: 0, top: 0, width: "100%", height: "100%" }
+                    };
+                    var chart = new google.visualization.Table($("#drawDataTable")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
+        });
+
+        $("select[name=timeIntervalDatatable]").change(function () {
+            $.ajax({
+                type: "POST",
+                url: "getDatatable",
+                data: JSON.stringify({
+                    dateRangeStart: $("input[name=timeRangeStart]").val(),
+                    dateRangeEnd: $("input[name=timeRangeEnd]").val(),
+                    timeInterval: $("select[name=timeIntervalDatatable]").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var data = google.visualization.arrayToDataTable(response);
+
+
+                    var options = {
+                        title: 'Datatable',
+                        width: 1000,
+                        chartArea: {left: 0, top: 0, width: "100%", height: "100%"}
+                    };
+                    var chart = new google.visualization.Table($("#drawDataTable")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            })
+        });
+
+        $("#backFromDatatable").click(function () {
+            $("#chartDiv").show();
+            $("#datatableDiv").hide();
+        });
     });
 </script>
 <div class="jumbotron">
@@ -173,72 +245,86 @@
 </div>
 
 <div class="row">
-    <div id="chartArea" class="col-lg-6">
-        <div id="displayChart"></div>
-    </div>
-    <div id="menuArea" class="col-lg-6">
-        <input type="button" id="viewDataTable" class="btn btn-default pull-left" value="View Data Table"><br /><br />
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <strong>Time Range:</strong><br />
-                <label for="timeRangeStart">Start:</label>
-                <input type="date" name="timeRangeStart" /><br />
+    <div id="chartDiv">
+        <div id="chartArea" class="col-lg-6">
+            <div id="displayChart"></div>
+        </div>
+        <div id="menuArea" class="col-lg-6">
+            <input type="button" id="viewDataTable" class="btn btn-default pull-left" value="View Data Table"><br /><br />
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <strong>Time Range:</strong><br />
+                    <label for="timeRangeStart">Start:</label>
+                    <input type="date" name="timeRangeStart" /><br />
 
-                <label for="timeRangeEnd">End:</label>
-                <input type="date" name="timeRangeEnd" /><br />
+                    <label for="timeRangeEnd">End:</label>
+                    <input type="date" name="timeRangeEnd" /><br />
 
-                <label for="dataToDisplay">Data:</label>
-                <select name="dataToDisplay">
-                    <option value="expensesUserCategories">Expenses by User Categories</option>
-                    <option value="expensesIncomeTime">Expenses and Income over Time</option>
-                    <option value="netOverTime">Income minus Expenses (Net) over Time</option>
-                </select><br />
-                <div id="expensesUserCategories">
-                    <label for="displayType">Display Type:</label>
-                    <select name="displayType">
-                        <option value="barChart">Bar Chart</option>
-                        <option value="pieChart">Pie Chart</option>
-                        <option value="table">Table</option>
+                    <label for="dataToDisplay">Data:</label>
+                    <select name="dataToDisplay">
+                        <option value="expensesUserCategories">Expenses by User Categories</option>
+                        <option value="expensesIncomeTime">Expenses and Income over Time</option>
+                        <option value="netOverTime">Income minus Expenses (Net) over Time</option>
                     </select><br />
-                    @if (Model.Categories != null)
-                    {
-                        <strong>Data to Display:</strong><br />
-                        foreach (var category in Model.Categories)
+                    <div id="expensesUserCategories">
+                        <label for="displayType">Display Type:</label>
+                        <select name="displayType">
+                            <option value="barChart">Bar Chart</option>
+                            <option value="pieChart">Pie Chart</option>
+                            <option value="table">Table</option>
+                        </select><br />
+                        @if (Model.Categories != null)
                         {
-                            <input type="checkbox" name="selectedCategories[]" value="@category.Value" checked>
-                            <label for="selectedCategories[]">@category.Text</label><br />
+                            <strong>Data to Display:</strong><br />
+                            foreach (var category in Model.Categories)
+                            {
+                                <input type="checkbox" name="selectedCategories[]" value="@category.Value" checked>
+                                <label for="selectedCategories[]">@category.Text</label><br />
+                            }
                         }
-                    }
-                    <input type="button" id="expensesUserCategoriesButton" class="btn btn-default pull-right" value="Submit">
-                </div>
+                        <input type="button" id="expensesUserCategoriesButton" class="btn btn-default pull-right" value="Submit">
+                    </div>
 
-                <div id="expensesIncomeTime" hidden>
-                    <label for="timeIntervalExpensesIncomeTime">Time Interval:</label>
-                    <select name="timeIntervalExpensesIncomeTime">
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="yearly">Yearly</option>
-                    </select><br />
-                    <input type="checkbox" name="dataToDisplayCheckboxes" value="Income" checked>
-                    <label for="dataToDisplayCheckboxes">Income</label><br />
-                    <input type="checkbox" name="dataToDisplayCheckboxes" value="Expenses" checked>
-                    <label for="dataToDisplayCheckboxes">Expenses</label><br />
-                    <input type="button" id="expensesIncomeTimeButton" class="btn btn-default pull-right" value="Submit">
-                </div>
+                    <div id="expensesIncomeTime" hidden>
+                        <label for="timeIntervalExpensesIncomeTime">Time Interval:</label>
+                        <select name="timeIntervalExpensesIncomeTime">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select><br />
+                        <input type="checkbox" name="dataToDisplayCheckboxes" value="Income" checked>
+                        <label for="dataToDisplayCheckboxes">Income</label><br />
+                        <input type="checkbox" name="dataToDisplayCheckboxes" value="Expenses" checked>
+                        <label for="dataToDisplayCheckboxes">Expenses</label><br />
+                        <input type="button" id="expensesIncomeTimeButton" class="btn btn-default pull-right" value="Submit">
+                    </div>
 
-                <div id="netOverTime" hidden>
-                    <label for="timeIntervalNetOverTime">Time Interval:</label>
-                    <select name="timeIntervalNetOverTime">
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="yearly">Yearly</option>
-                    </select><br />
-                    <input type="button" id="netOverTimeButton" class="btn btn-default pull-right" value="Submit">
+                    <div id="netOverTime" hidden>
+                        <label for="timeIntervalNetOverTime">Time Interval:</label>
+                        <select name="timeIntervalNetOverTime">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select><br />
+                        <input type="button" id="netOverTimeButton" class="btn btn-default pull-right" value="Submit">
+                    </div>
                 </div>
-
             </div>
         </div>
+    </div>
+    <div id="datatableDiv" hidden>
+        <div id="row">
+            <label for="timeIntervalDatatable">Time Interval:</label>
+            <select name="timeIntervalDatatable">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+            <input type="button" id="backFromDatatable" class="btn btn-default pull-right" value="Back">
+        </div>
+        <div id="drawDataTable"></div>
     </div>
 </div>

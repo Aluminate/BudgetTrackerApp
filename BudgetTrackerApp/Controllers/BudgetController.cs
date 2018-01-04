@@ -113,7 +113,7 @@ namespace BudgetTrackerApp.Controllers
             {
                 chartData.Add(new object[]
                 {
-                    "Date", "Amount ($)"
+                    "Date", "Net ($)"
                 });
                 var expenses = db.Expenses.Where(e => e.BudgetId == budgetId);
 
@@ -139,7 +139,7 @@ namespace BudgetTrackerApp.Controllers
                     {
                         Date = (DateTime)data.Key,
                         Amount = data.Sum(d => d.Amount)
-                    });
+                    }).ToList();
 
                 var groupedIncome = income
                     .GroupBy(e => e.Date)
@@ -147,7 +147,7 @@ namespace BudgetTrackerApp.Controllers
                     {
                         Date = (DateTime)data.Key,
                         Amount = data.Sum(d => d.Amount)
-                    });
+                    }).ToList();
 
                 if (timeInterval == "daily")
                 {
@@ -275,7 +275,7 @@ namespace BudgetTrackerApp.Controllers
                     {
                         Date = (DateTime)data.Key,
                         Amount = data.Sum(d => d.Amount)
-                    });
+                    }).ToList();
 
                 var groupedIncome = income
                     .GroupBy(e => e.Date)
@@ -283,7 +283,7 @@ namespace BudgetTrackerApp.Controllers
                     {
                         Date = (DateTime)data.Key,
                         Amount = data.Sum(d => d.Amount)
-                    });
+                    }).ToList();
 
                 if (timeInterval == "daily")
                 {
@@ -380,6 +380,146 @@ namespace BudgetTrackerApp.Controllers
                         chartData.Add(new object[]
                             {
                                 date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                            });
+                    });
+                }
+            }
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        public JsonResult GetDatatable(DateTime? dateRangeStart, DateTime? dateRangeEnd, string timeInterval)
+        {
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var chartData = new List<object>();
+            if (checkBudgetId())
+            {
+                chartData.Add(new object[]
+                {
+                    "Date", "Income ($)", "Expenses ($)", "Net ($)"
+                });
+
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId);
+
+                var income = db.Incomes.Where(i => i.BudgetId == budgetId);
+
+                if (dateRangeStart == null)
+                {
+                    var earliestExpenseDate = expenses.Min(e => e.Date);
+                    var earliestIncomeDate = income.Min(e => e.Date);
+                    dateRangeStart = (earliestExpenseDate < earliestIncomeDate ? earliestExpenseDate : earliestIncomeDate);
+                }
+
+                if (dateRangeEnd == null)
+                {
+                    var latestExpenseDate = expenses.Max(e => e.Date);
+                    var latestIncomeDate = income.Max(e => e.Date);
+                    dateRangeEnd = (latestExpenseDate > latestIncomeDate ? latestExpenseDate : latestIncomeDate);
+                }
+
+                var groupedExpenses = expenses
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    }).ToList();
+
+                var groupedIncome = income
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    }).ToList();
+
+                if (timeInterval == "daily")
+                {
+                    var selectedDates = new List<DateTime>();
+
+                    for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddDays(1))
+                    {
+                        selectedDates.Add(date);
+                    }
+
+                    var totalIncome = new decimal();
+                    var totalExpenses = new decimal();
+                    selectedDates.ForEach(date =>
+                    {
+                        totalIncome = groupedIncome.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
+                        totalExpenses = groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
+                        chartData.Add(new object[]
+                            {
+                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                            });
+                    });
+                }
+                else if (timeInterval == "weekly")
+                {
+                    var selectedDates = new List<DateTime>();
+
+                    for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddDays(7))
+                    {
+                        selectedDates.Add(date);
+                    }
+
+                    var totalIncome = new decimal();
+                    var totalExpenses = new decimal();
+                    var intervalEndDate = new DateTime();
+                    selectedDates.ForEach(date =>
+                    {
+                        intervalEndDate = date.AddDays(7);
+                        totalIncome += groupedIncome.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        chartData.Add(new object[]
+                            {
+                        date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                            });
+                    });
+                }
+                else if (timeInterval == "monthly")
+                {
+                    var selectedDates = new List<DateTime>();
+
+                    for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddMonths(1))
+                    {
+                        selectedDates.Add(date);
+                    }
+
+                    var totalIncome = new decimal();
+                    var totalExpenses = new decimal();
+                    var intervalEndDate = new DateTime();
+                    selectedDates.ForEach(date =>
+                    {
+                        intervalEndDate = date.AddMonths(1);
+                        totalIncome += groupedIncome.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        chartData.Add(new object[]
+                            {
+                        date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                            });
+                    });
+                }
+                else if (timeInterval == "yearly")
+                {
+                    var selectedDates = new List<DateTime>();
+
+                    for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddYears(1))
+                    {
+                        selectedDates.Add(date);
+                    }
+
+                    var totalIncome = new decimal();
+                    var totalExpenses = new decimal();
+                    var intervalEndDate = new DateTime();
+                    selectedDates.ForEach(date =>
+                    {
+                        intervalEndDate = date.AddYears(1);
+                        totalIncome += groupedIncome.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
+                        chartData.Add(new object[]
+                            {
+                                date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
                             });
                     });
                 }
