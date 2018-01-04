@@ -11,13 +11,13 @@
     $(document).ready(function () {
         $('#editCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
-            modal.find('#categoryName').val($("#CategoryId option:selected").text());
-            modal.find('#categoryId').val($("#CategoryId").val());
+            modal.find('#categoryName').val($("#CategoryMenuCategoryId option:selected").text());
+            modal.find('#categoryId').val($("#CategoryMenuCategoryId").val());
         });
         $('#deleteCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
-            modal.find('#categoryName').text($("#CategoryId option:selected").text());
-            modal.find('#categoryId').val($("#CategoryId").val());
+            modal.find('#categoryName').text($("#CategoryMenuCategoryId option:selected").text());
+            modal.find('#categoryId').val($("#CategoryMenuCategoryId").val());
         });
         $('#editExpenseModal').on('show.bs.modal', function (event) {
             var expenseId = $(event.relatedTarget).closest('tr').data('expense-id');
@@ -217,7 +217,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-lg-8">
-                        @Html.DropDownList("CategoryId", Model.Categories, new { @size = 15 })
+                        @Html.DropDownList("CategoryMenuCategoryId", Model.Categories, new { @size = 15 })
                     </div>
                     <div class="col-lg-4">
                         <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#addCategoryModal">Add</button>
