@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace BudgetTrackerApp.Models
 {
@@ -75,7 +76,7 @@ namespace BudgetTrackerApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Repeat password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string RepeatPassword { get; set; }
 
         [Required]
@@ -116,7 +117,7 @@ namespace BudgetTrackerApp.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }
@@ -133,5 +134,12 @@ namespace BudgetTrackerApp.Models
         [Required]
         [Display(Name = "SecurityAnswer")]
         public string SecurityAnswer { get; set; }
+    }
+
+    public class SettingsViewModel
+    {
+        public IEnumerable<SelectListItem> MyBudgetsList { get; set; }
+        public IEnumerable<SelectListItem> PendingBudgetsList { get; set; }
+        public IEnumerable<SelectListItem> SharedBudgetUserList { get; set; }
     }
 }

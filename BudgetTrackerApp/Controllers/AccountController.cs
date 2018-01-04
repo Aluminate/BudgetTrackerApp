@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BudgetTrackerApp.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Web.Security;
+using System.Collections.Generic;
 
 namespace BudgetTrackerApp.Controllers
 {
@@ -205,6 +207,8 @@ namespace BudgetTrackerApp.Controllers
                         newAccountBudget.BudgetId = newBudget.BudgetId;
                         newAccountBudget.IsOwner = true;
                         newAccountBudget.UserId = user.Id;
+                        newAccountBudget.CreatedDate = DateTime.Now;
+                        newAccountBudget.IsAccepted = true;
                         db.AccountBudgets.Add(newAccountBudget);
                         Category newCategory = new Category();
                         newCategory.BudgetId = newBudget.BudgetId;
@@ -479,7 +483,52 @@ namespace BudgetTrackerApp.Controllers
         // GET: /Account/Settings
         public ActionResult Settings()
         {
-            return View();
+            var viewModel = new SettingsViewModel();
+            if (checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                var userId = User.Identity.GetUserId();
+                var budgetList = new List<SelectListItem>();
+                db.AccountBudgets.Where(ab => ab.UserId == userId && (ab.IsOwner || ab.IsAccepted)).ToList().ForEach(data => {
+                    budgetList.Add(new SelectListItem
+                    {
+                        Value = data.BudgetId.ToString(),
+                        Text = UserManager.FindById(db.AccountBudgets.Single(x => x.BudgetId == data.BudgetId && x.IsOwner == true).UserId).UserName
+                    });
+                });
+                viewModel.MyBudgetsList = budgetList;
+
+                var pendingList = new List<SelectListItem>();
+                db.AccountBudgets.Where(ab => ab.UserId == userId && !ab.IsOwner && !ab.IsAccepted).ToList().ForEach(data => {
+                    pendingList.Add(new SelectListItem
+                    {
+                        Value = data.BudgetId.ToString(),
+                        Text = UserManager.FindById(db.AccountBudgets.Single(x => x.BudgetId == data.BudgetId && x.IsOwner == true).UserId).UserName
+                    });
+                });
+                viewModel.PendingBudgetsList = pendingList;
+
+                var sharedList = new List<SelectListItem>();
+                var myBudgetId = db.AccountBudgets.Single(ab => ab.UserId == userId && ab.IsOwner).BudgetId;
+                db.AccountBudgets.Where(ab => ab.BudgetId == myBudgetId && !ab.IsOwner).ToList().ForEach(data => {
+                    sharedList.Add(new SelectListItem
+                    {
+                        Value = data.BudgetId.ToString(),
+                        Text = UserManager.FindById(db.AccountBudgets.Single(x => x.BudgetId == data.BudgetId && x.IsOwner == true).UserId).UserName
+                    });
+                });
+                viewModel.SharedBudgetUserList = sharedList;
+            }
+            return View(viewModel);
+        }
+
+        // Checks if user should have access to this budgetId
+        private bool checkBudgetId()
+        {
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var userId = User.Identity.GetUserId();
+            var accountBudget = db.AccountBudgets.FirstOrDefault(ab => ab.BudgetId == budgetId && ab.UserId == userId);
+            return accountBudget != null;
         }
 
         protected override void Dispose(bool disposing)

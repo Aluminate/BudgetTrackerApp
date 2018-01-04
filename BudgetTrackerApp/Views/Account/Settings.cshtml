@@ -1,18 +1,70 @@
-﻿@using BudgetTrackerApp.Models
-@{
+﻿@{
     ViewBag.Title = "Settings";
 }
+@model BudgetTrackerApp.Models.SettingsViewModel
 
-<!DOCTYPE html>
+<div class="jumbotron">
+    <h1 class="text-center">My Budget Tracker</h1>
+</div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
-    <div>
-    
+<div class="row">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#budgetGoals">Budget Goals</a></li>
+        <li><a data-toggle="tab" href="#settings">Account Settings</a></li>
+        <li><a data-toggle="tab" href="#budgets">User Budgets</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="budgetGoals" class="tab-pane fade in active">
+            <form>
+
+            </form>
+        </div>
+        <div id="settings" class="tab-pane fade">
+            <h3>Menu 1</h3>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        <div id="budgets" class="tab-pane fade">
+            <h3>budget</h3>
+            <div class="col-sm-4">
+                <h3>User Budgets</h3>
+                @if (Model.MyBudgetsList != null)
+                {
+                    @Html.DropDownList("MyBudgets", Model.MyBudgetsList, new { @size = 15, style = "width:270px;" }); <br />
+                    <input type="button" id="SelectUserBudgetButton" value="Select" class="btn btn-primary pull-left">
+                    <input type="button" id="DeleteUserBudgetButton" value="Delete" class="btn btn-primary">
+                }
+                else
+                {
+                    <span>~None~</span>
+                }
+            </div>
+            <div class="col-sm-4">
+                <h3>Pending Budgets</h3>
+                @if (Model.PendingBudgetsList != null && Model.PendingBudgetsList.Count() > 0)
+                {
+                    @Html.DropDownList("PendingBudgets", Model.PendingBudgetsList, new { @size = 15, @style = "width:270px;" }); <br />
+                    <input type="button" id="AcceptPendingButton" value="Accept" class="btn btn-primary pull-left">
+                    <input type="button" id="DeclinePendingButton" value="Decline" class="btn btn-primary">
+                }
+                else
+                {
+                    <span>~None~</span>
+                }
+            </div>
+            <div class="col-sm-4">
+                <h3>Shared Budgets</h3>
+                @if (Model.SharedBudgetUserList != null)
+                {
+                    @Html.DropDownList("SharedBudgets", Model.SharedBudgetUserList, new { @size = 15, @style = "width:270px;" }); <br />
+                    <input type="button" id="AddSharedUserButton" value="Share" class="btn btn-primary pull-left">
+                    <input type="button" id="RemoveSharedUserButton" value="Remove" class="btn btn-primary">
+                }
+                else
+                {
+                    <span>~None~</span>
+                }
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
