@@ -9,6 +9,10 @@
 
 <script>
     $(document).ready(function () {
+        $("#expenseTable").DataTable({
+            "order": [[1, "desc"]]
+        });
+
         $('#editIncomeModal').on('show.bs.modal', function (event) {
             var incomeId = $(event.relatedTarget).closest('tr').data('income-id');
             var description = $(event.relatedTarget).closest('tr').data('description');
@@ -49,7 +53,7 @@
                     <th>@Html.DisplayName("Description")</th>
                     <th>@Html.DisplayName("Date")</th>
                     <th>@Html.DisplayName("Amount ($)")</th>
-                    <th>@Html.DisplayName("Actions")</th>
+                    <th data-sortable="false">@Html.DisplayName("Actions")</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,7 +63,7 @@
                     {
                         <tr data-income-id="@income.IncomeId" data-description="@income.Description" data-date="@income.Date.ToString("yyyy-MM-dd")" data-amount="@income.Amount">
                             <td>@Html.DisplayFor(modelItem => income.Description)</td>
-                            <td>@income.Date.ToString("dd/MM/yyyy")</td>
+                            <td>@income.Date.ToString("yyyy/MM/dd")</td>
                             <td>@Html.DisplayFor(modelItem => income.Amount)</td>
                             <td>
                                 <i class="fa fa-pencil" title="Edit" data-toggle="modal" data-target="#editIncomeModal"></i>

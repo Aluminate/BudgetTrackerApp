@@ -245,7 +245,7 @@ namespace BudgetTrackerApp.Controllers
                     totalExpenses += groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
                     chartData.Add(new object[]
                         {
-                    date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                    date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses
                         });
                 });
                 

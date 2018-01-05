@@ -168,7 +168,7 @@ namespace BudgetTrackerApp.Controllers
                         net -= groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), net
+                        date.ToString("yyyy/MM/dd"), net
                             });
                     });
                 }
@@ -190,7 +190,7 @@ namespace BudgetTrackerApp.Controllers
                         net -= groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), net
+                        date.ToString("yyyy/MM/dd"), net
                             });
                     });
                 }
@@ -212,7 +212,7 @@ namespace BudgetTrackerApp.Controllers
                         net -= groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), net
+                        date.ToString("yyyy/MM/dd"), net
                             });
                     });
                 }
@@ -234,7 +234,7 @@ namespace BudgetTrackerApp.Controllers
                         net -= groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), net
+                        date.ToString("yyyy/MM/dd"), net
                             });
                     });
                 }
@@ -307,7 +307,7 @@ namespace BudgetTrackerApp.Controllers
                             totalExpenses += groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                        date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses
                             });
                     });
                 }
@@ -332,7 +332,7 @@ namespace BudgetTrackerApp.Controllers
                             totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                        date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses
                             });
                     });
                 }
@@ -357,7 +357,7 @@ namespace BudgetTrackerApp.Controllers
                             totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                        date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses
                             });
                     });
                 }
@@ -382,7 +382,7 @@ namespace BudgetTrackerApp.Controllers
                             totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                                date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                                date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses
                             });
                     });
                 }
@@ -453,7 +453,7 @@ namespace BudgetTrackerApp.Controllers
                         totalExpenses = groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                        date.ToString("yyyy/MM/dd"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
                             });
                     });
                 }
@@ -476,7 +476,7 @@ namespace BudgetTrackerApp.Controllers
                         totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                        date.ToString("yyyy/MM/dd") + " to " + intervalEndDate.AddDays(-1).ToString("yyyy/MM/dd"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
                             });
                     });
                 }
@@ -499,7 +499,7 @@ namespace BudgetTrackerApp.Controllers
                         totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                        date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                        date.ToString("yyyy/MM/dd") + " to " + intervalEndDate.AddDays(-1).ToString("yyyy/MM/dd"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
                             });
                     });
                 }
@@ -522,7 +522,7 @@ namespace BudgetTrackerApp.Controllers
                         totalExpenses += groupedExpenses.Where(gi => gi.Date >= date && gi.Date < intervalEndDate).Sum(gi => (decimal?)gi.Amount) ?? Decimal.Zero;
                         chartData.Add(new object[]
                             {
-                                date.ToString("dd/MM/yyyy") + " to " + intervalEndDate.AddDays(-1).ToString("dd/MM/yyyy"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
+                                date.ToString("yyyy/MM/dd") + " to " + intervalEndDate.AddDays(-1).ToString("yyyy/MM/dd"), totalIncome, totalExpenses, (totalIncome - totalExpenses)
                             });
                     });
                 }

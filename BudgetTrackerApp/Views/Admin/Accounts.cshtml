@@ -7,12 +7,21 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
 
+<script>
+    $(document).ready(function () {
+        $("#accountsTable").DataTable({
+            "order": [[4, "desc"]]
+        });
+    });
+</script>
+
+
 <div class="jumbotron">
     <h1 class="text-center">Accounts</h1>
 </div>
 
 <div class="row">
-    <table class="table" id="expenseTable">
+    <table class="table" id="accountsTable">
         <thead>
             <tr>
                 <th>@Html.DisplayName("Username")</th>
@@ -31,8 +40,8 @@
                     <td>@Html.DisplayFor(modelItem => account.Username)</td>
                     <td>@Html.DisplayFor(modelItem => account.FirstName)</td>
                     <td>@Html.DisplayFor(modelItem => account.LastName)</td>
-                    <td>@account.LastOnlineDate.ToString("dd/MM/yyyy")</td>
-                    <td>@account.CreatedDate.ToString("dd/MM/yyyy")</td>
+                    <td>@account.LastOnlineDate.ToString("yyyy/MM/dd")</td>
+                    <td>@account.CreatedDate.ToString("yyyy/MM/dd")</td>
                 </tr>
                 }
             }

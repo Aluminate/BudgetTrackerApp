@@ -8,6 +8,10 @@
 
 <script>
     $(document).ready(function () {
+        $("#expenseTable").DataTable({
+            "order": [[2, "desc"]]
+        });
+
         $('#editCategoryModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('#categoryName').val($("#CategoryMenuCategoryId option:selected").text());
@@ -63,7 +67,7 @@
                     <th>@Html.DisplayName("Category")</th>
                     <th>@Html.DisplayName("Date")</th>
                     <th>@Html.DisplayName("Amount ($)")</th>
-                    <th>@Html.DisplayName("Actions")</th>
+                    <th data-sortable="false">@Html.DisplayName("Actions")</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,7 +78,7 @@
                         <tr data-expense-id="@expense.ExpenseId" data-description="@expense.Description" data-category-id="@expense.CategoryId" data-date="@expense.Date.ToString("yyyy-MM-dd")" data-amount="@expense.Amount">
                             <td>@Html.DisplayFor(modelItem => expense.Description)</td>
                             <td>@Html.DisplayFor(modelItem => expense.Category.Name)</td>
-                            <td>@expense.Date.ToString("dd/MM/yyyy")</td>
+                            <td>@expense.Date.ToString("yyyy/MM/dd")</td>
                             <td>@Html.DisplayFor(modelItem => expense.Amount)</td>
                             <td>
                                 <i class="fa fa-picture-o"></i>
