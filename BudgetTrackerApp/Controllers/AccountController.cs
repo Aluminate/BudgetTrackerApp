@@ -199,44 +199,44 @@ namespace BudgetTrackerApp.Controllers
                     if (user.UserName.Equals("Admin"))
                         await UserManager.AddToRoleAsync(user.Id, "Admin");
                     else
-                    {
                         await UserManager.AddToRoleAsync(user.Id, "User");
-                        // Add entries into database for new user
-                        Budget newBudget = new Budget();
-                        newBudget.CreatedDate = DateTime.Now;
-                        db.Budgets.Add(newBudget);
-                        db.SaveChanges();
-                        AccountBudget newAccountBudget = new AccountBudget();
-                        newAccountBudget.BudgetId = newBudget.BudgetId;
-                        newAccountBudget.IsOwner = true;
-                        newAccountBudget.UserId = user.Id;
-                        newAccountBudget.CreatedDate = DateTime.Now;
-                        newAccountBudget.IsAccepted = true;
-                        db.AccountBudgets.Add(newAccountBudget);
-                        Category newCategory = new Category();
-                        newCategory.BudgetId = newBudget.BudgetId;
-                        newCategory.Name = "Food and Groceries";
-                        db.Categories.Add(newCategory);
-                        Category newCategory2 = new Category();
-                        newCategory2.BudgetId = newBudget.BudgetId;
-                        newCategory2.Name = "Entertainment";
-                        db.Categories.Add(newCategory2);
-                        Category newCategory3 = new Category();
-                        newCategory3.BudgetId = newBudget.BudgetId;
-                        newCategory3.Name = "Utilities";
-                        db.Categories.Add(newCategory3);
-                        Category newCategory4 = new Category();
-                        newCategory4.BudgetId = newBudget.BudgetId;
-                        newCategory4.Name = "Personal Care";
-                        db.Categories.Add(newCategory4);
-                        db.SaveChanges();
-                        HttpCookie cookie = new HttpCookie("BudgetId");
-                        cookie.Value = newBudget.BudgetId.ToString();
-                        Response.Cookies.Add(cookie);
-                        HttpCookie cookie2 = new HttpCookie("BudgetUsername");
-                        cookie2.Value = user.UserName;
-                        Response.Cookies.Add(cookie2);
-                    }
+
+                    // Add entries into database for new user
+                    Budget newBudget = new Budget();
+                    newBudget.CreatedDate = DateTime.Now;
+                    db.Budgets.Add(newBudget);
+                    db.SaveChanges();
+                    AccountBudget newAccountBudget = new AccountBudget();
+                    newAccountBudget.BudgetId = newBudget.BudgetId;
+                    newAccountBudget.IsOwner = true;
+                    newAccountBudget.UserId = user.Id;
+                    newAccountBudget.CreatedDate = DateTime.Now;
+                    newAccountBudget.IsAccepted = true;
+                    db.AccountBudgets.Add(newAccountBudget);
+                    Category newCategory = new Category();
+                    newCategory.BudgetId = newBudget.BudgetId;
+                    newCategory.Name = "Food and Groceries";
+                    db.Categories.Add(newCategory);
+                    Category newCategory2 = new Category();
+                    newCategory2.BudgetId = newBudget.BudgetId;
+                    newCategory2.Name = "Entertainment";
+                    db.Categories.Add(newCategory2);
+                    Category newCategory3 = new Category();
+                    newCategory3.BudgetId = newBudget.BudgetId;
+                    newCategory3.Name = "Utilities";
+                    db.Categories.Add(newCategory3);
+                    Category newCategory4 = new Category();
+                    newCategory4.BudgetId = newBudget.BudgetId;
+                    newCategory4.Name = "Personal Care";
+                    db.Categories.Add(newCategory4);
+                    db.SaveChanges();
+                    HttpCookie cookie = new HttpCookie("BudgetId");
+                    cookie.Value = newBudget.BudgetId.ToString();
+                    Response.Cookies.Add(cookie);
+                    HttpCookie cookie2 = new HttpCookie("BudgetUsername");
+                    cookie2.Value = user.UserName;
+                    Response.Cookies.Add(cookie2);
+                    
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     return RedirectToAction("Dashboard", "Home");
@@ -530,6 +530,18 @@ namespace BudgetTrackerApp.Controllers
             return View(viewModel);
         }
 
+        // GET: Settings
+        public ActionResult AccountSettings()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = UserManager.FindById(userId);
+            ViewBag.FirstName = user.FirstName;
+            ViewBag.MiddleName = user.MiddleName;
+            ViewBag.LastName = user.LastName;
+            ViewBag.SecurityQuestion = user.SecurityQuestion;
+            return View();
+        }
+
         // POST: CreateSharedBudget
         [HttpPost]
         public ActionResult CreateSharedBudget(string username)
@@ -686,7 +698,7 @@ namespace BudgetTrackerApp.Controllers
                     UserManager.ChangePassword(userId, model.OldPassword, model.NewPassword);
                 }
             }
-            return RedirectToAction("Settings");
+            return Redirect(Request.UrlReferrer.PathAndQuery);
         }
 
         // Checks if user should have access to this budgetId

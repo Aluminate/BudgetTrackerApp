@@ -13,7 +13,7 @@ namespace BudgetTrackerApp.Controllers
     {
         private MyBudgetTrackerAppEntities db = new MyBudgetTrackerAppEntities();
 
-        // GET: Accounts
+        // GET: SiteSettings
         public ActionResult SiteSettings()
         {
             return View();

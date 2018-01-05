@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Account Settings";
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<div class="jumbotron">
+    <h1 class="text-center">Account Settings</h1>
+</div>
+
+<div class="row">
+    @Html.Partial("_AccountSettingsPartial", new BudgetTrackerApp.Models.AccountSettings());
+</div>

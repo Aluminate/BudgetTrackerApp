@@ -55,6 +55,7 @@
 
     <div class="tab-content">
         <div id="budgetGoals" class="tab-pane fade in active">
+            <h3>Update your Budget Goal Settings</h3>
             <form action="UpdateBudgetGoal" method="post">
                 <label for="budgetGoalsEnabled">Progress Bar Enabled:</label>
                 <input type="checkbox" name="budgetGoalsEnabled" @(Model.myBudgetGoal != null ? (Model.myBudgetGoal.IsProgressBarEnabled ? "checked" : "") : "")><br /><br />
