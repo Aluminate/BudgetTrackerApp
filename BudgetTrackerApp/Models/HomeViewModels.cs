@@ -9,6 +9,9 @@ namespace BudgetTrackerApp.Models
     public class DashboardViewModel
     {
         public IEnumerable<SelectListItem> Categories { get; set; }
+        public bool progressBarEnabled { get; set; }
+        public decimal progressBarPercentage { get; set; }
+        public string progressBarText { get; set; }
     }
 
     public class AdminDashboardViewModel

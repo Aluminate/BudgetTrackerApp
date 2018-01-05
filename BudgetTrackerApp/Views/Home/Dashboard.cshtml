@@ -6,6 +6,22 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
+    $(document).ready(function () {
+        var elem = document.getElementById("myBar");
+        var width = 10;
+        var id = setInterval(frame, 10);
+        function frame() {
+            if (@(Model.progressBarPercentage) > 100)
+                elem.style.backgroundColor = "red";
+            if (width >= @(Model.progressBarPercentage) || width >= 100) {
+                clearInterval(id);
+            } else {
+                width++;
+                elem.style.width = width + '%';
+            }
+        }
+    });
+
     google.load("visualization", "1", { packages: ["corechart"] });
     google.setOnLoadCallback(drawChart);
     function drawChart() {
@@ -35,12 +51,34 @@
     };
 </script>
 
+<style>
+    #myProgress {
+        width: 100%;
+        background-color: #ddd;
+    }
+
+    #myBar {
+        width: 0%;
+        height: 30px;
+        background-color: #4CAF50;
+        text-align: center;
+        line-height: 30px;
+        color: white;
+    }
+</style>
+
 <div class="jumbotron">
     <h1 class="text-center">@(Request.Cookies["BudgetUsername"]?.Value)'s Dashboard</h1>
 </div>
 
 <div class="row">
-    <p>Progress Bar Placeholder</p>
+    @if (Model.progressBarEnabled)
+    {
+        <h4 class="text-center">Expenses this Month</h4>
+        <div id="myProgress">
+            <div id="myBar">@(Model.progressBarText)</div>
+        </div><br /><br />
+    }
 </div>
 
 <div class="row">   
@@ -70,7 +108,7 @@
                         <label for="amount">Amount ($):</label>
     
 
-                        <input type="number" step="any" name="amount" required /><br />
+                        <input type="number" step="any" name="amount" min="0" required /><br />
     
 
 

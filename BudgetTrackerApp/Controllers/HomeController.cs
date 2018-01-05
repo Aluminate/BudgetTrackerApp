@@ -51,7 +51,19 @@ namespace BudgetTrackerApp.Controllers
                         Value = c.CategoryId.ToString(),
                         Text = c.Name
                     }).ToList();
-
+                var budgetGoal = db.BudgetGoals.SingleOrDefault(bg => bg.BudgetId == budgetId);
+                if (budgetGoal != null)
+                {
+                    viewModel.progressBarEnabled = budgetGoal.IsProgressBarEnabled;
+                    var currentYear = DateTime.Now.Year;
+                    var currentMonth = DateTime.Now.Month;
+                    var expenses = db.Expenses.Where(e => e.BudgetId == budgetId && e.Date.Year == currentYear && e.Date.Month == currentMonth);
+                    var monthlyExpenses = Decimal.Zero;
+                    if (expenses.Count() > 0)
+                        monthlyExpenses = expenses.Sum(e => e.Amount);
+                    viewModel.progressBarPercentage = monthlyExpenses / budgetGoal.BudgetAmount * 100;
+                    viewModel.progressBarText = $"${monthlyExpenses.ToString()} / ${budgetGoal.BudgetAmount.ToString()}";
+                }
             }
             return View(viewModel);
         }
