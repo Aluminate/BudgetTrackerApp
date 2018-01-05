@@ -747,6 +747,37 @@ namespace BudgetTrackerApp.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult UploadPicture(HttpPostedFileBase file, int expenseId)
+        {
+            if (file != null && file.ContentLength > 0)
+                try
+                {
+                    var expense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId);
+                    var path = "";
+                    if (!string.IsNullOrEmpty(expense.PictureUrl))
+                    {
+                        path = Path.Combine(Server.MapPath("~/Images"),
+                                               Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
+                        expense.PictureUrl += "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                    }
+                    else
+                    {
+                        path = Path.Combine(Server.MapPath("~/Images"),
+                                                   Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
+                        expense.PictureUrl += "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                    }
+                    file.SaveAs(path);
+                    db.SaveChanges();
+                    ViewBag.Message = "File uploaded successfully";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = ex;
+                }
+            return RedirectToAction("Expenses");
+        }
+
         // Checks if user should have access to this budgetId
         private bool checkBudgetId()
         {
