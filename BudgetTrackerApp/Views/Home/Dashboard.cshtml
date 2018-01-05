@@ -23,8 +23,9 @@
     });
 
     google.load("visualization", "1", { packages: ["corechart"] });
-    google.setOnLoadCallback(drawChart);
-    function drawChart() {
+    google.setOnLoadCallback(drawCharts);
+
+    function drawCharts() {
         $.ajax({
             type: "POST",
             url: "getMonthlyExpenses",
@@ -39,6 +40,30 @@
                     title: 'Expenses This Month'
                 };
                 var chart = new google.visualization.PieChart($("#piechartdiv")[0]);
+                chart.draw(data, options);
+            },
+            failure: function (response) {
+                alert(response.d);
+            },
+            error: function (response) {
+                alert(response.d);
+            }
+        })
+
+        $.ajax({
+            type: "POST",
+            url: "getMonthlyExpensesIncome",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var data = google.visualization.arrayToDataTable(response);
+
+                //Line chart
+                var options = {
+                    title: 'Expenses This Month'
+                };
+                var chart = new google.visualization.LineChart($("#linechartdiv")[0]);
                 chart.draw(data, options);
             },
             failure: function (response) {
@@ -120,6 +145,7 @@
     </div>
     <div class="col-lg-8">
         <div id="piechartdiv"></div>
+        <div id="linechartdiv"></div>
     </div>
 </div>
 

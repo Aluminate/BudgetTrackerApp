@@ -192,6 +192,67 @@ namespace BudgetTrackerApp.Controllers
             return Json(chartData);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "User")]
+        public JsonResult getMonthlyExpensesIncome()
+        {
+            var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+            var chartData = new List<object>();
+            if (checkBudgetId())
+            {
+                chartData.Add(new object[]
+                {
+                    "Date", "Income", "Expenses"
+                });
+
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId);
+
+                var income = db.Incomes.Where(i => i.BudgetId == budgetId);
+
+
+                var dateRangeStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var dateRangeEnd = DateTime.Now;
+
+                var groupedExpenses = expenses
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    }).ToList();
+
+                var groupedIncome = income
+                    .GroupBy(e => e.Date)
+                    .Select(data => new
+                    {
+                        Date = (DateTime)data.Key,
+                        Amount = data.Sum(d => d.Amount)
+                    }).ToList();
+
+                
+                var selectedDates = new List<DateTime>();
+
+                for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddDays(1))
+                {
+                    selectedDates.Add(date);
+                }
+
+                var totalIncome = new decimal();
+                var totalExpenses = new decimal();
+                selectedDates.ForEach(date =>
+                {
+                    totalIncome += groupedIncome.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
+                    totalExpenses += groupedExpenses.FirstOrDefault(gi => gi.Date == date)?.Amount ?? 0;
+                    chartData.Add(new object[]
+                        {
+                    date.ToString("dd/MM/yyyy"), totalIncome, totalExpenses
+                        });
+                });
+                
+            }
+            return Json(chartData);
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
