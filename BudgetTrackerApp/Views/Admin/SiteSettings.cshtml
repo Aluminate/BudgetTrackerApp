@@ -1,12 +1,101 @@
 ﻿@{
     ViewBag.Title = "Site Settings";
 }
+@model BudgetTrackerApp.Models.SiteSettingsViewModel
 
+<script>
+    $(document).ready(function () {
+        $('#hideFeedbackModal').on('show.bs.modal', function (event) {
+            var feedbackId = $(event.relatedTarget).data('feedback-id');
+            var modal = $(this);
+
+            modal.find('input[name=feedbackId]').val(feedbackId);
+        });
+    });
+
+</script>
 
 <div class="jumbotron">
     <h1 class="text-center">Site Settings</h1>
 </div>
 
 <div class="row">
-    
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <h3>Private Feedback</h3>
+            </div>
+            <div class="panel-body text-center pre-scrollable">
+                @if (Model.PrivateFeedback.Count > 0)
+                {
+                    foreach (var testimonial in Model.PrivateFeedback)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-body text-center">
+                                <i class="fa fa-times-circle pull-right" data-toggle="modal" data-target="#hideFeedbackModal" data-feedback-id="@testimonial.feedback.FeedbackId"></i><br />
+                                <strong>@testimonial.feedback.Message</strong><br />
+                                <span class="pull-right">-@testimonial.Name</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <br /><br /><br />
+                    <h4>None</h4>
+                    <br /><br /><br />
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <h3>Public Testimonials</h3>
+            </div>
+            <div class="panel-body text-center pre-scrollable">
+                @if (Model.PublicTestimonial.Count > 0)
+                {
+                    foreach (var testimonial in Model.PublicTestimonial)
+                    {
+                        <div class="panel panel-default ">
+                            <div class="panel-body text-center">
+                                <i class="fa fa-times-circle pull-right" data-toggle="modal" data-target="#hideFeedbackModal" data-feedback-id="@testimonial.feedback.FeedbackId"></i><br />
+                                <strong>@testimonial.feedback.Message</strong><br />
+                                <span class="pull-right">-@testimonial.Name</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <br /><br /><br />
+                    <h4>None</h4>
+                    <br /><br /><br />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hide Feedback Modal -->
+<div id="hideFeedbackModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Hide Feedback</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Hides feedback from view.</h5>
+                <h5>Note: Public Testimonials will also be hidden from index page.</h5>
+                <form action="HideFeedback" method="post">
+                    <input type="hidden" name="feedbackId" required>
+                    <input type="submit" class="btn btn-default" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

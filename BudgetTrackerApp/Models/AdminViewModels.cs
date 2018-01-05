@@ -28,4 +28,22 @@ namespace BudgetTrackerApp.Models
 
         public List<Account> Accounts { get; set; }
     }
+
+    public class SiteSettingsViewModel
+    {
+        public class Testimonial
+        {
+            public Testimonial(Feedback feedback, string name)
+            {
+                this.feedback = feedback;
+                this.Name = name;
+            }
+
+            public Feedback feedback;
+            public string Name;
+        }
+
+        public List<Testimonial> PrivateFeedback { get; set; }
+        public List<Testimonial> PublicTestimonial { get; set; }
+    }
 }

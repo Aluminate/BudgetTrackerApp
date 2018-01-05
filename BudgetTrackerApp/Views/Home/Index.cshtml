@@ -22,15 +22,27 @@
     </div>
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-body text-center">
-                @foreach (var testimonial in Model.Testimonials)
+            <div class="panel-heading text-center">
+                <h3>Public Testimonials</h3>
+            </div>
+            <div class="panel-body text-center pre-scrollable">
+                @if (Model.Testimonials.Count > 0)
                 {
-                    <div class="panel panel-default">
-                        <div class="panel-body text-center">
-                            <strong>@testimonial.Message</strong><br />
-                            <span class="pull-right">-@testimonial.Name</span>
+                    foreach (var testimonial in Model.Testimonials)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-body text-center">
+                                <strong>@testimonial.Message</strong><br />
+                                <span class="pull-right">-@testimonial.Name</span>
+                            </div>
                         </div>
-                    </div>
+                    }
+                }
+                else
+                {
+                    <br /><br /><br />
+                    <h4>None</h4>
+                    <br /><br /><br />
                 }
             </div>
         </div>
