@@ -8,7 +8,33 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
-    
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        $.ajax({
+            type: "POST",
+            url: "getMonthlyRegistrations",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var data = google.visualization.arrayToDataTable(response);
+
+                //Pie
+                var options = {
+                    title: 'Registrations per Month'
+                };
+                var chart = new google.visualization.BarChart($("#chartdiv")[0]);
+                chart.draw(data, options);
+            },
+            failure: function (response) {
+                alert(response.d);
+            },
+            error: function (response) {
+                alert(response.d);
+            }
+        })
+    };
 </script>
 
 <div class="jumbotron">
@@ -25,5 +51,6 @@
         </div>
     </div>
     <div class="col-lg-6">
+        <div id="chartdiv"></div>
     </div>
 </div>

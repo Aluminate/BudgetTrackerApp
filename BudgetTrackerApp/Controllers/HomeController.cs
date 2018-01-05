@@ -79,8 +79,6 @@ namespace BudgetTrackerApp.Controllers
             var adminId = User.Identity.GetUserId();
             var allUsers = context.Users.Where(u => u.Id != adminId).ToList();
 
-            var adminAccount = (System.Security.Claims.ClaimsIdentity)User.Identity;
-
             viewModel.totalUsers = allUsers.Count;
             viewModel.registrationsThisMonth = allUsers.Where(au => au.CreatedDate.Year == currentYear && au.CreatedDate.Month == currentMonth).Count();
 
@@ -89,6 +87,7 @@ namespace BudgetTrackerApp.Controllers
 
         // POST: CreateFeedback
         [HttpPost]
+        [Authorize(Roles = "User")]
         public ActionResult CreateFeedback(bool isPublic, string comment)
         {
             if (ModelState.IsValid)
@@ -107,6 +106,7 @@ namespace BudgetTrackerApp.Controllers
 
         // POST: CreateExpense
         [HttpPost]
+        [Authorize(Roles = "User")]
         public ActionResult CreateExpense(DateTime date, string categoryId, string description, float amount)
         {
             if (ModelState.IsValid && checkBudgetId())
@@ -124,6 +124,7 @@ namespace BudgetTrackerApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         public JsonResult getMonthlyExpenses()
         {
            
@@ -146,6 +147,48 @@ namespace BudgetTrackerApp.Controllers
                         })
                 );
             }
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public JsonResult getMonthlyRegistrations()
+        {
+            var context = new ApplicationDbContext();
+            var adminId = User.Identity.GetUserId();
+            var allUsers = context.Users.Where(u => u.Id != adminId).ToList();
+
+            var dateRangeStart = allUsers.Min(au => au.CreatedDate);
+            var dateRangeEnd = allUsers.Max(au => au.CreatedDate);
+            // set to the first day of month
+            dateRangeStart = new DateTime(dateRangeStart.Year, dateRangeStart.Month, 1);
+            dateRangeEnd = new DateTime(dateRangeEnd.Year, dateRangeEnd.Month, 1);
+
+            var chartData = new List<object>();
+
+            chartData.Add(new object[]
+            {
+                "Registrations", "Total Registrations"
+            });
+
+            var selectedDates = new List<DateTime>();
+
+            for (var date = (DateTime)dateRangeStart; date <= dateRangeEnd; date = date.AddMonths(1))
+            {
+                selectedDates.Add(date);
+            }
+
+            var intervalEndDate = new DateTime();
+            selectedDates.ForEach(date =>
+            {
+                intervalEndDate = date.AddMonths(1);
+                chartData.Add(new object[]
+                    {
+                        date.ToString("MMM yyyy"), allUsers.Where(au => au.CreatedDate >= date && au.CreatedDate < intervalEndDate).Count()
+                    });
+            });
+
+
             return Json(chartData);
         }
 
