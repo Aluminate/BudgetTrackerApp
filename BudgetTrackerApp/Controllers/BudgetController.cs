@@ -30,7 +30,24 @@ namespace BudgetTrackerApp.Controllers
                         Value = c.CategoryId.ToString(),
                         Text = c.Name
                     }).ToList();
-                viewModel.Expenses = db.Expenses.Where(e => e.BudgetId == budgetId).OrderByDescending(e => e.Date).ToList();
+                var expenses = db.Expenses.Where(e => e.BudgetId == budgetId).OrderByDescending(e => e.Date).ToList();
+                viewModel.Expenses = expenses;
+                var pictureList = new List<ExpensesViewModel.Picture>();
+                expenses.ForEach(data =>
+                {
+                    if (!string.IsNullOrEmpty(data.PictureUrl))
+                    {
+                        var stringList = data.PictureUrl.Split('%');
+                        foreach(string picString in stringList)
+                        {
+                            if (!string.IsNullOrEmpty(picString))
+                                pictureList.Add(new ExpensesViewModel.Picture(picString, data.ExpenseId));
+                        }
+                    }
+                });
+
+                viewModel.Pictures = pictureList;
+
             }
             return View(viewModel);
         }
@@ -759,13 +776,14 @@ namespace BudgetTrackerApp.Controllers
                     {
                         path = Path.Combine(Server.MapPath("~/Images"),
                                                Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
-                        expense.PictureUrl += "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                        string newPicUrl = expense.PictureUrl + "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                        expense.PictureUrl = newPicUrl;
                     }
                     else
                     {
                         path = Path.Combine(Server.MapPath("~/Images"),
                                                    Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
-                        expense.PictureUrl += "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                        expense.PictureUrl = "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
                     }
                     file.SaveAs(path);
                     db.SaveChanges();

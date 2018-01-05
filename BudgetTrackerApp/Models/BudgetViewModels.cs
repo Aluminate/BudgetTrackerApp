@@ -10,6 +10,18 @@ namespace BudgetTrackerApp.Models
     {
         public IEnumerable<SelectListItem> Categories { get; set; }
         public List<Expense> Expenses { get; set; }
+        public List<Picture> Pictures { get; set; }
+        public class Picture
+        {
+            public Picture(string PictureUrl, int expenseId)
+            {
+                this.PictureUrl = PictureUrl;
+                this.expenseId = expenseId;
+            }
+
+            public string PictureUrl { get; set; }
+            public int expenseId { get; set; }
+        }
     }
 
     public class IncomeViewModel

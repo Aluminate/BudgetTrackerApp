@@ -61,7 +61,7 @@
           <Property Name="Description" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Date" Type="date" Nullable="false" />
           <Property Name="Amount" Type="decimal" Precision="13" Scale="2" Nullable="false" />
-          <Property Name="PictureUrl" Type="nvarchar" MaxLength="50" />
+          <Property Name="PictureUrl" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="Feedback">
           <Key>
@@ -301,7 +301,7 @@
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Amount" Type="Decimal" Precision="13" Scale="2" Nullable="false" />
-          <Property Name="PictureUrl" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PictureUrl" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Budget" Relationship="Self.FK_Expenses_Budgets" FromRole="Expenses" ToRole="Budgets" />
           <NavigationProperty Name="Category" Relationship="Self.FK_Expenses_Categories" FromRole="Expenses" ToRole="Categories" />
         </EntityType>
