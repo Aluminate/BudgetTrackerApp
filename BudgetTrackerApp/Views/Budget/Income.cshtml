@@ -57,15 +57,15 @@
                 {
                     foreach (var income in Model.IncomeList)
                     {
-                    <tr data-income-id="@income.IncomeId" data-description="@income.Description" data-date="@income.Date.ToString("yyyy-MM-dd")" data-amount="@income.Amount">
-                        <td>@Html.DisplayFor(modelItem => income.Description)</td>
-                        <td>@income.Date.ToString("dd/MM/yyyy")</td>
-                        <td>@Html.DisplayFor(modelItem => income.Amount)</td>
-                        <td>
-                            <i class="fa fa-pencil" title="Edit" data-toggle="modal" data-target="#editIncomeModal"></i>
-                            <i class="fa fa-trash" title="Delete" data-toggle="modal" data-target="#deleteIncomeModal"></i>
-                        </td>
-                    </tr>
+                        <tr data-income-id="@income.IncomeId" data-description="@income.Description" data-date="@income.Date.ToString("yyyy-MM-dd")" data-amount="@income.Amount">
+                            <td>@Html.DisplayFor(modelItem => income.Description)</td>
+                            <td>@income.Date.ToString("dd/MM/yyyy")</td>
+                            <td>@Html.DisplayFor(modelItem => income.Amount)</td>
+                            <td>
+                                <i class="fa fa-pencil" title="Edit" data-toggle="modal" data-target="#editIncomeModal"></i>
+                                <i class="fa fa-trash" title="Delete" data-toggle="modal" data-target="#deleteIncomeModal"></i>
+                            </td>
+                        </tr>
                     }
                 }
             </tbody>
@@ -73,9 +73,11 @@
     </div>
     <div class="col-lg-2">
         <div id="buttons">
-            <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#addIncomeModal">Add One-Time Income</button>
-            <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#periodicIncomeModal">Set Up Periodic Income</button>
-            <button type="button" class="btn btn-default btn-block">Export to Excel</button>
+            <form method="post" action="ExportIncomeToExcel">
+                <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#addIncomeModal">Add One-Time Income</button>
+                <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#periodicIncomeModal">Set Up Periodic Income</button>
+                <input type="submit" class="btn btn-default btn-block" value="Export To Excel" />
+            </form>
         </div>
         <div id="filter">
         </div>

@@ -3,9 +3,12 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace BudgetTrackerApp.Controllers
 {
@@ -688,6 +691,60 @@ namespace BudgetTrackerApp.Controllers
                 }
             }
             return RedirectToAction("Expenses");
+        }
+
+        
+        public void ExportExpensesToExcel()
+        {
+            if (checkBudgetId())
+            {
+                var gridView = new GridView();
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                gridView.DataSource = db.Expenses.Where(e => e.BudgetId == budgetId).OrderByDescending(e => e.Date).Select(data => new {
+                    Description = data.Description,
+                    Category = data.Category.Name,
+                    Date = data.Date,
+                    Amount = data.Amount
+                }).ToList();
+                gridView.DataBind();
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", "attachment; filename=Expenses.xls");
+                Response.ContentType = "application/ms-excel";
+                Response.Charset = "";
+                StringWriter stringWriter = new StringWriter();
+                HtmlTextWriter htmlTextWriter = new HtmlTextWriter(stringWriter);
+                gridView.RenderControl(htmlTextWriter);
+                Response.Output.Write(stringWriter.ToString());
+                Response.Flush();
+                Response.End();
+            }
+        }
+
+        public void ExportIncomeToExcel()
+        {
+            if (checkBudgetId())
+            {
+                var gridView = new GridView();
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                gridView.DataSource = db.Incomes.Where(e => e.BudgetId == budgetId).OrderByDescending(e => e.Date).Select(data => new {
+                    Description = data.Description,
+                    Date = data.Date,
+                    Amount = data.Amount
+                }).ToList();
+                gridView.DataBind();
+                Response.ClearContent();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", "attachment; filename=Income.xls");
+                Response.ContentType = "application/ms-excel";
+                Response.Charset = "";
+                StringWriter stringWriter = new StringWriter();
+                HtmlTextWriter htmlTextWriter = new HtmlTextWriter(stringWriter);
+                gridView.RenderControl(htmlTextWriter);
+                Response.Output.Write(stringWriter.ToString());
+                Response.Flush();
+                Response.End();
+            }
         }
 
         // Checks if user should have access to this budgetId
