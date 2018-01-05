@@ -365,6 +365,7 @@
     <Content Include="Views\Admin\SiteSettings.cshtml" />
     <Content Include="Views\Shared\_AccountSettingsPartial.cshtml" />
     <Content Include="Views\Account\AccountSettings.cshtml" />
+    <Content Include="Views\Home\AdminDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
