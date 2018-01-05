@@ -239,12 +239,6 @@ namespace BudgetTrackerApp.Controllers
                     }
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
                     return RedirectToAction("Dashboard", "Home");
                 }
                 AddErrors(result);
@@ -526,6 +520,12 @@ namespace BudgetTrackerApp.Controllers
                 viewModel.SharedBudgetUserList = sharedList;
 
                 viewModel.myBudgetGoal = db.BudgetGoals.SingleOrDefault(bg => bg.BudgetId == budgetId);
+
+                var user = UserManager.FindById(userId);
+                ViewBag.FirstName = user.FirstName;
+                ViewBag.MiddleName = user.MiddleName;
+                ViewBag.LastName = user.LastName;
+                ViewBag.SecurityQuestion = user.SecurityQuestion;
             }
             return View(viewModel);
         }
@@ -660,6 +660,30 @@ namespace BudgetTrackerApp.Controllers
                     editBudgetGoal.BudgetAmount = budgetAmount;
                     editBudgetGoal.IsProgressBarEnabled = boolBudgetGoalsEnabled;
                     db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Settings");
+        }
+
+        //
+        // POST: /Account/UpdateAccountSettings
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateAccountSettings(AccountSettings model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.Identity.GetUserId();
+                var user = UserManager.FindById(userId);
+                if (UserManager.CheckPassword(user, model.OldPassword)) {
+                    string hashedSecurityPassword = UserManager.PasswordHasher.HashPassword(model.SecurityQuestionAnswer);
+                    user.FirstName = model.FirstName;
+                    user.MiddleName = model.MiddleName;
+                    user.LastName = model.LastName;
+                    user.SecurityQuestion = model.SecurityQuestion;
+                    user.SecurityQuestionAnswer = hashedSecurityPassword;
+                    UserManager.Update(user);
+                    UserManager.ChangePassword(userId, model.OldPassword, model.NewPassword);
                 }
             }
             return RedirectToAction("Settings");

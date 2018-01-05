@@ -142,5 +142,45 @@ namespace BudgetTrackerApp.Models
         public IEnumerable<SelectListItem> PendingBudgetsList { get; set; }
         public IEnumerable<SelectListItem> SharedBudgetUserList { get; set; }
         public BudgetGoal myBudgetGoal { get; set; }
+        public AccountSettings myAccountSettings { get; set; }
+    }
+
+    public class AccountSettings
+    {
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string MiddleName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Security Question")]
+        public string SecurityQuestion { get; set; }
+
+        [Required]
+        [Display(Name = "Security Question Answer")]
+        public string SecurityQuestionAnswer { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current Password")]
+        public string OldPassword { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Repeat New Password")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
+        public string RepeatPassword { get; set; }
     }
 }
