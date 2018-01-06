@@ -772,18 +772,19 @@ namespace BudgetTrackerApp.Controllers
                 {
                     var expense = db.Expenses.SingleOrDefault(e => e.ExpenseId == expenseId);
                     var path = "";
+                    var fileExtension = Path.GetExtension(file.FileName);
                     if (!string.IsNullOrEmpty(expense.PictureUrl))
                     {
                         path = Path.Combine(Server.MapPath("~/Images"),
-                                               Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
-                        string newPicUrl = expense.PictureUrl + "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                                               Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}{fileExtension}"));
+                        string newPicUrl = expense.PictureUrl + "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}{fileExtension}");
                         expense.PictureUrl = newPicUrl;
                     }
                     else
                     {
                         path = Path.Combine(Server.MapPath("~/Images"),
-                                                   Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}"));
-                        expense.PictureUrl = "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}-{file.FileName}");
+                                                   Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}{fileExtension}"));
+                        expense.PictureUrl = "%" + Path.GetFileName($"{expenseId.ToString()}-{DateTime.UtcNow.Ticks}{fileExtension}");
                     }
                     file.SaveAs(path);
                     db.SaveChanges();
@@ -794,6 +795,71 @@ namespace BudgetTrackerApp.Controllers
                     ViewBag.Message = ex;
                 }
             return RedirectToAction("Expenses");
+        }
+
+        [HttpPost]
+        public ActionResult getPictures(int expenseId)
+        {
+            var expense = db.Expenses.Single(e => e.ExpenseId == expenseId);
+            var pictureList = new List<ExpensesViewModel.Picture>();
+            if (!string.IsNullOrEmpty(expense.PictureUrl))
+            {
+                var stringList = expense.PictureUrl.Split('%');
+                foreach (string picString in stringList)
+                {
+                    if (!string.IsNullOrEmpty(picString))
+                        pictureList.Add(new ExpensesViewModel.Picture(picString, expenseId));
+                }
+            }
+
+            return Json(pictureList);
+        }
+
+        // POST: DeletePicture
+        [HttpPost]
+        public JsonResult DeletePicture(string pictureUrl, string expenseId)
+        {
+            if (ModelState.IsValid && !string.IsNullOrEmpty(pictureUrl) && checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                var expenseIdConverted = Convert.ToInt32(expenseId);
+                var expense = db.Expenses.SingleOrDefault(e => e.BudgetId == budgetId && e.ExpenseId == expenseIdConverted);
+                var fullPictureUrl = expense.PictureUrl;
+
+                if (fullPictureUrl.Contains(pictureUrl))
+                {
+                    expense.PictureUrl = fullPictureUrl.Replace("%" + pictureUrl, "");
+                    var filePath = Server.MapPath("~/Images") + "\\"+ pictureUrl;
+                    if (System.IO.File.Exists(filePath))
+                        System.IO.File.Delete(filePath);
+                }
+                db.SaveChanges();
+                var result = new { Success = "True" };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            return null;
+        }
+
+        public FileResult DownloadPicture(string pictureUrl, string expenseId)
+        {
+            if (ModelState.IsValid && !string.IsNullOrEmpty(pictureUrl) && !string.IsNullOrEmpty(expenseId) && checkBudgetId())
+            {
+                var budgetId = Convert.ToInt32(Request.Cookies["BudgetId"].Value);
+                var expenseIdConverted = Convert.ToInt32(expenseId);
+                var expense = db.Expenses.SingleOrDefault(e => e.BudgetId == budgetId && e.ExpenseId == expenseIdConverted);
+                var fullPictureUrl = expense.PictureUrl;
+
+                if (fullPictureUrl.Contains(pictureUrl))
+                {
+                    expense.PictureUrl = fullPictureUrl.Replace("%" + pictureUrl, "");
+                    var filePath = Server.MapPath("~/Images") + "\\" + pictureUrl;
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        return File(filePath, "image/jpeg");
+                    }
+                }
+            }
+            return null;
         }
 
         // Checks if user should have access to this budgetId

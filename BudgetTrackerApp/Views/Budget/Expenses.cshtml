@@ -58,7 +58,55 @@
 
             modal.find('input[name=expenseId]').val(expenseId);
         });
+
+        $('#picturesModal').on('show.bs.modal', function (event) {
+            var expenseId = $(event.relatedTarget).closest('tr').data('expense-id');
+            var modal = $(this);
+            modal.find('input[name=expenseId]').val(expenseId);
+            $.ajax({
+                url: 'getPictures',
+                type: 'POST',
+                data: { expenseId: $(event.relatedTarget).closest('tr').data('expense-id') },
+                datatype: 'json',
+                success: function (data) {
+                    var options = '';
+                    $.each(data, function () {
+                        options += '<option value="' + this.PictureUrl + '">' + this.PictureUrl + '</option>';
+                    });
+                    $('#picSelect').prop('disabled', false).html(options);
+                    $("#hiddenPicUrl").val($('#picSelect').val());
+                    if (options.length == 0) {
+                        modal.find("#picsBody").hide();
+                        modal.find("#noPicsMessage").show();
+                    }
+                    else {
+                        modal.find("#picsBody").show();
+                        modal.find("#noPicsMessage").hide();
+                    }
+                }
+            });
+        });
+
+        $('#picSelect').change(function () {
+            $("#hiddenPicUrl").val($('#picSelect').val());
+        });
+
+        $("#DeletePicture").click(function () {
+            $.ajax({
+                url: 'DeletePicture',
+                type: 'POST',
+                data: {
+                    expenseId: $("#hiddenExpenseId").val(),
+                    PictureUrl: $("#hiddenPicUrl").val()
+                },
+                datatype: 'json',
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        });
     });
+
 
 </script>
 <div class="jumbotron">
@@ -66,7 +114,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-10">
+    <div class="col-md-10">
         <table class="table" id="expenseTable">
             <thead>
                 <tr>
@@ -88,7 +136,7 @@
                             <td>@expense.Date.ToString("yyyy/MM/dd")</td>
                             <td>@Html.DisplayFor(modelItem => expense.Amount)</td>
                             <td>
-                                <i class="fa fa-picture-o"></i>
+                                <i class="fa fa-picture-o" data-toggle="modal" data-target="#picturesModal"></i>
                                 <i class="fa fa-upload" data-toggle="modal" data-target="#uploadPictureModal"></i>
                                 <i class="fa fa-pencil" title="Edit" data-toggle="modal" data-target="#editExpenseModal"></i>
                                 <i class="fa fa-trash" title="Delete" data-toggle="modal" data-target="#deleteExpenseModal"></i>
@@ -99,7 +147,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-lg-2">
+    <div class="col-md-2">
         <div id="buttons">
             <form method="post" action="ExportExpensesToExcel">
                 <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#addExpenseModal">Add Expense</button>
@@ -228,10 +276,10 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-lg-8">
-                        @Html.DropDownList("CategoryMenuCategoryId", Model.Categories, new { @size = 15 })
+                    <div class="col-md-8">
+                        @Html.DropDownList("CategoryMenuCategoryId", Model.Categories)
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-md-4">
                         <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#addCategoryModal">Add</button>
                         <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#editCategoryModal">Edit</button>
                         <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#deleteCategoryModal">Delete</button>
@@ -318,9 +366,9 @@
             </div>
             <div class="modal-body">
                 @using (Html.BeginForm("UploadPicture",
-                            "Budget",
-                            FormMethod.Post,
-                            new { enctype = "multipart/form-data" }))
+                        "Budget",
+                        FormMethod.Post,
+                        new { enctype = "multipart/form-data" }))
                 {
                     <input type="hidden" name="expenseId" required>
                     <label for="file">Upload Picture:</label>
@@ -328,6 +376,38 @@
                     <input type="submit" class="btn btn-default" value="Submit" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pictures Modal -->
+<div id="picturesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Pictures</h4>
+            </div>
+            <div class="modal-body">
+                <h3 id="noPicsMessage" hidden>No Pictures</h3>
+                <div class="row" id="picsBody">
+                    <form action="DownloadPicture" method="post">
+                        <input type="hidden" name="expenseId" id="hiddenExpenseId" required>
+                        <input type="hidden" name="pictureUrl" id="hiddenPicUrl" required>
+                        <div class="col-md-8">
+                            <select id="picSelect" disabled></select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-default btn-block">View Image</button>
+                            <button type="button" class="btn btn-default btn-block" id="DeletePicture">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
