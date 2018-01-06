@@ -165,7 +165,9 @@ namespace BudgetTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                string hashedSecurityPassword = UserManager.PasswordHasher.HashPassword(model.SecurityQuestionAnswer);
+                var bytes = new System.Text.UTF8Encoding().GetBytes(model.SecurityQuestionAnswer);
+                var hashBytes = System.Security.Cryptography.MD5.Create().ComputeHash(bytes);
+                string hashedSecurityPassword = Convert.ToBase64String(hashBytes);
                 var user = new ApplicationUser {
                     UserName = model.Username,
                     FirstName = model.FirstName,
@@ -278,12 +280,15 @@ namespace BudgetTrackerApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Username);
+                var bytes = new System.Text.UTF8Encoding().GetBytes(model.SecurityAnswer);
+                var hashBytes = System.Security.Cryptography.MD5.Create().ComputeHash(bytes);
+                var hashedSecurityPassword = Convert.ToBase64String(hashBytes);
                 if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
-                else if (user.SecurityQuestionAnswer.Equals(model.SecurityAnswer))
+                else if (user.SecurityQuestionAnswer.Equals(hashedSecurityPassword))
                 {
                     var generatedToken = UserManager.GeneratePasswordResetToken(user.Id);
                     return RedirectToAction("ResetPassword", "Account", new { username = model.Username, token = generatedToken });
@@ -692,7 +697,9 @@ namespace BudgetTrackerApp.Controllers
                 var userId = User.Identity.GetUserId();
                 var user = UserManager.FindById(userId);
                 if (UserManager.CheckPassword(user, model.OldPassword)) {
-                    string hashedSecurityPassword = UserManager.PasswordHasher.HashPassword(model.SecurityQuestionAnswer);
+                    var bytes = new System.Text.UTF8Encoding().GetBytes(model.SecurityQuestionAnswer);
+                    var hashBytes = System.Security.Cryptography.MD5.Create().ComputeHash(bytes);
+                    string hashedSecurityPassword = Convert.ToBase64String(hashBytes);
                     user.FirstName = model.FirstName;
                     user.MiddleName = model.MiddleName;
                     user.LastName = model.LastName;
