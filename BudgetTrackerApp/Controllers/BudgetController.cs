@@ -83,6 +83,7 @@ namespace BudgetTrackerApp.Controllers
                         Value = c.CategoryId.ToString(),
                         Text = c.Name
                     }).ToList();
+                viewModel.IsEnabled = db.Expenses.Where(e => e.BudgetId == budgetId).Any() && db.Incomes.Where(i => i.BudgetId == budgetId).Any();
             }
             return View(viewModel);
         }

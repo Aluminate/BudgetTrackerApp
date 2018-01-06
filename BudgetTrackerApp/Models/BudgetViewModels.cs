@@ -38,5 +38,6 @@ namespace BudgetTrackerApp.Models
     public class StatisticsViewModel
     {
         public IEnumerable<SelectListItem> Categories { get; set; }
+        public bool IsEnabled { get; set; }
     }
 }

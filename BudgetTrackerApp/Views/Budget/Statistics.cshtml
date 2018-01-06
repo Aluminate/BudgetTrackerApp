@@ -244,6 +244,8 @@
 </div>
 
 <div class="row">
+    @if (Model.IsEnabled)
+    {
     <div id="chartDiv">
         <div id="chartArea" class="col-lg-6">
             <div id="displayChart"></div>
@@ -326,4 +328,11 @@
         </div>
         <div id="drawDataTable"></div>
     </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h3>Please have at least one entry for income and for expenses to utilize statistics!</h3>
+        </div>
+    }
 </div>
