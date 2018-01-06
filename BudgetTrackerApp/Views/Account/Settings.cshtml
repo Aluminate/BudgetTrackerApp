@@ -43,6 +43,20 @@
             modal.find('input[name="budgetId"]').val($("#MyBudgets").val());
             modal.find('.modalUsername').text($("#MyBudgets option:selected").text());
         });
+
+        $('#MyBudgets').change(function () {
+            $("#SelectUserBudgetButton").removeAttr('disabled');
+            $("#DeleteUserBudgetButton").removeAttr('disabled');
+        });
+
+        $('#PendingBudgets').change(function () {
+            $("#AcceptPendingButton").removeAttr('disabled');
+            $("#DeclinePendingButton").removeAttr('disabled');
+        });
+
+        $('#SharedBudgets').change(function () {
+            $("#RemoveSharedUserButton").removeAttr('disabled');
+        });
     });
 </script>
 
@@ -75,8 +89,8 @@
                 @if (Model.MyBudgetsList != null)
                 {
                     @Html.DropDownList("MyBudgets", Model.MyBudgetsList, new { @size = 15, style = "width:270px;" }); <br />
-                    <input type="button" id="SelectUserBudgetButton" value="Select" class="btn btn-primary pull-left" data-toggle="modal" data-target="#changeSharedBudgetModal">
-                    <input type="button" id="DeleteUserBudgetButton" value="Delete" class="btn btn-primary" data-toggle="modal" data-target="#deleteMySharedBudgetModal">
+                    <input type="button" id="SelectUserBudgetButton" value="Select" class="btn btn-primary pull-left" data-toggle="modal" data-target="#changeSharedBudgetModal" disabled>
+                    <input type="button" id="DeleteUserBudgetButton" value="Delete" class="btn btn-primary" data-toggle="modal" data-target="#deleteMySharedBudgetModal" disabled>
                 }
                 else
                 {
@@ -88,8 +102,8 @@
                 @if (Model.PendingBudgetsList != null && Model.PendingBudgetsList.Count() > 0)
                 {
                     @Html.DropDownList("PendingBudgets", Model.PendingBudgetsList, new { @size = 15, @style = "width:270px;" }); <br />
-                    <input type="button" id="AcceptPendingButton" value="Accept" class="btn btn-primary pull-left" data-toggle="modal" data-target="#acceptSharedBudgetModal">
-                    <input type="button" id="DeclinePendingButton" value="Decline" class="btn btn-primary" data-toggle="modal" data-target="#declineSharedBudgetModal">
+                    <input type="button" id="AcceptPendingButton" value="Accept" class="btn btn-primary pull-left" data-toggle="modal" data-target="#acceptSharedBudgetModal" disabled>
+                    <input type="button" id="DeclinePendingButton" value="Decline" class="btn btn-primary" data-toggle="modal" data-target="#declineSharedBudgetModal" disabled>
                 }
                 else
                 {
@@ -102,7 +116,7 @@
                 {
                     @Html.DropDownList("SharedBudgets", Model.SharedBudgetUserList, new { @size = 15, @style = "width:270px;" }); <br />
                     <input type="button" id="AddSharedUserButton" value="Share" class="btn btn-primary pull-left" data-toggle="modal" data-target="#addSharedBudgetModal">
-                    <input type="button" id="RemoveSharedUserButton" value="Remove" class="btn btn-primary" data-toggle="modal" data-target="#removeSharedBudgetModal">
+                    <input type="button" id="RemoveSharedUserButton" value="Remove" class="btn btn-primary" data-toggle="modal" data-target="#removeSharedBudgetModal" disabled>
                 }
                 else
                 {
