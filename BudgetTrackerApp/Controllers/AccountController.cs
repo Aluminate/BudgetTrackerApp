@@ -483,6 +483,10 @@ namespace BudgetTrackerApp.Controllers
         // GET: /Account/Settings
         public ActionResult Settings()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("AccountSettings");
+            }
             var viewModel = new SettingsViewModel();
             if (checkBudgetId())
             {
