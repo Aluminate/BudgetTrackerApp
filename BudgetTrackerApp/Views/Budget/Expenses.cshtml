@@ -277,6 +277,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-8">
+                        <label for="CategoryMenuCategoryId">Your Categories:</label>
                         @Html.DropDownList("CategoryMenuCategoryId", Model.Categories)
                     </div>
                     <div class="col-md-4">
@@ -304,7 +305,7 @@
             </div>
             <div class="modal-body">
                 <form action="CreateCategory" method="post">
-                    <input type="text" name="categoryName" id="categoryName">
+                    <input type="text" name="categoryName" id="categoryName" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -324,8 +325,8 @@
             </div>
             <div class="modal-body">
                 <form action="EditCategory" method="post">
-                    <input type="hidden" name="categoryId" id="categoryId">
-                    <input type="text" name="categoryName" id="categoryName">
+                    <input type="hidden" name="categoryId" id="categoryId" required>
+                    <input type="text" name="categoryName" id="categoryName" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
@@ -346,7 +347,7 @@
             <div class="modal-body">
                 <p>Are you sure you want to delete category: <span id="categoryName"></span></p>
                 <form action="DeleteCategory" method="post">
-                    <input type="hidden" name="categoryId" id="categoryId">
+                    <input type="hidden" name="categoryId" id="categoryId" required>
                     <input type="submit" class="btn btn-default" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </form>
